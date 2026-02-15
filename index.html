@@ -138,6 +138,17 @@
             border-top: 1px solid #eee;
         }
         
+        .nightly-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 16px;
@@ -154,6 +165,12 @@
             .control-group {
                 width: 100%;
             }
+            
+            .build-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
         }
     </style>
 </head>
@@ -162,6 +179,9 @@
         <div class="header">
             <h1>OpenJDK Android 构建</h1>
             <p>从 Uniaball/OpenJDK-Android 仓库的 GitHub Actions 下载最新构建版本</p>
+            <p style="font-size: 0.9rem; color: #4CAF50; margin-top: 8px;">
+                <i>check_circle</i> 使用 nightly.link 服务，无需 GitHub 登录即可下载
+            </p>
         </div>
         
         <div class="card">
@@ -180,7 +200,7 @@
                     </label>
                 </div>
                 <button id="fetchBtn" class="button primary round" onclick="fetchBuilds()">
-                    <i>download</i>
+                    <i>search</i>
                     <span>获取构建</span>
                 </button>
             </div>
@@ -197,6 +217,7 @@
         
         <div class="footer">
             <p>构建来自 <a href="https://github.com/Uniaball/OpenJDK-Android" target="_blank">Uniaball/OpenJDK-Android</a> 仓库的 GitHub Actions</p>
+            <p>下载服务由 <a href="https://nightly.link" target="_blank">nightly.link</a> 提供，无需 GitHub 登录</p>
             <p>本页面仅提供下载功能，OpenJDK 构建由原仓库维护者提供</p>
         </div>
     </div>
@@ -256,6 +277,15 @@
             });
         }
         
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
         // 获取构建列表
         async function fetchBuilds() {
             const version = versionSelect.value;
@@ -295,7 +325,8 @@
                     const runName = run.name || '';
                     return runName.includes(`JDK${version}`) || 
                            runName.includes(`jdk${version}`) ||
-                           runName.includes(`openjdk${version}`);
+                           runName.includes(`openjdk${version}`) ||
+                           runName.includes(`Java${version}`);
                 });
                 
                 if (versionRuns.length === 0) {
@@ -306,7 +337,7 @@
                 // 获取每个 run 的 artifacts
                 const builds = [];
                 
-                for (const run of versionRuns.slice(0, 10)) { // 限制前10个
+                for (const run of versionRuns.slice(0, 15)) { // 限制前15个
                     try {
                         const artifactsResponse = await fetch(
                             `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/artifacts`,
@@ -322,6 +353,9 @@
                             
                             if (artifactsData.artifacts && artifactsData.artifacts.length > 0) {
                                 artifactsData.artifacts.forEach(artifact => {
+                                    // 使用 nightly.link 生成下载链接
+                                    const nightlyLink = `https://nightly.link/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/${artifact.name}.zip`;
+                                    
                                     builds.push({
                                         id: artifact.id,
                                         name: artifact.name,
@@ -330,11 +364,12 @@
                                         createdAt: artifact.created_at,
                                         updatedAt: artifact.updated_at,
                                         sizeInBytes: artifact.size_in_bytes,
-                                        downloadUrl: artifact.archive_download_url,
+                                        downloadUrl: nightlyLink, // 使用 nightly.link
                                         workflowName: run.name,
                                         runNumber: run.run_number,
                                         status: run.status,
-                                        conclusion: run.conclusion
+                                        conclusion: run.conclusion,
+                                        headSha: run.head_sha ? run.head_sha.substring(0, 7) : 'N/A'
                                     });
                                 });
                             }
@@ -375,32 +410,40 @@
                 <div class="builds-list">
                     <p style="margin-bottom: 16px; color: #666;">
                         找到 ${builds.length} 个 OpenJDK ${version} 构建
+                        <span class="nightly-badge">nightly.link</span>
                     </p>
             `;
             
             builds.forEach(build => {
-                const sizeMB = (build.sizeInBytes / (1024 * 1024)).toFixed(2);
+                const sizeFormatted = formatFileSize(build.sizeInBytes);
                 const formattedDate = formatDate(build.createdAt);
                 const statusColor = build.conclusion === 'success' ? '#4CAF50' : 
                                   build.conclusion === 'failure' ? '#F44336' : '#FF9800';
+                const statusText = build.conclusion === 'success' ? '成功' :
+                                 build.conclusion === 'failure' ? '失败' : '进行中';
                 
                 html += `
                     <div class="build-item">
                         <div class="build-info">
-                            <div class="build-name">${build.name}</div>
+                            <div class="build-name">
+                                ${build.name}
+                                <span style="font-size: 0.75rem; color: #999; margin-left: 8px;">
+                                    #${build.runNumber}
+                                </span>
+                            </div>
                             <div class="build-meta">
-                                <span>工作流: ${build.workflowName}</span> • 
-                                <span>运行号: #${build.runNumber}</span> • 
                                 <span>${formattedDate}</span> • 
-                                <span>${sizeMB} MB</span> • 
-                                <span style="color: ${statusColor}">${build.conclusion || build.status}</span>
+                                <span>${sizeFormatted}</span> • 
+                                <span style="color: ${statusColor}">${statusText}</span> • 
+                                <span>提交: ${build.headSha}</span>
                             </div>
                         </div>
                         <div>
                             <a href="${build.downloadUrl}" 
                                download="${build.name}.zip" 
                                class="button primary small round"
-                               onclick="trackDownload('${build.name}', '${version}')">
+                               onclick="trackDownload('${build.name}', '${version}')"
+                               target="_blank">
                                 <i>download</i>
                                 <span>下载</span>
                             </a>
@@ -417,6 +460,33 @@
         function trackDownload(buildName, version) {
             console.log(`下载: ${buildName} (OpenJDK ${version})`);
             // 这里可以添加 analytics 跟踪代码
+            
+            // 显示下载提示
+            setTimeout(() => {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                    animation: fadeIn 0.3s;
+                `;
+                notification.innerHTML = `
+                    <i>check_circle</i>
+                    <span>开始下载: ${buildName}</span>
+                `;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOut 0.3s';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }, 100);
         }
         
         // 初始化
@@ -434,6 +504,20 @@
                     fetchBuilds();
                 }
             });
+            
+            // 添加 CSS 动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(10px); }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
