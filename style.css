@@ -1,7 +1,7 @@
 /* 添加CSS变量以支持RGBA颜色 */
 :root {
     --md-primary: #4a8bc2;
-    --md-primary-rgb: 103, 80, 164; /* 新增RGB变量 */
+    --md-primary-rgb: 74, 139, 194; /* 新增RGB变量 */
     --md-on-primary: #FFFFFF;
     --md-surface: #FEF7FF;
     --md-on-surface: #1C1B1F;
