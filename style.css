@@ -1,15 +1,18 @@
 /* 添加CSS变量以支持RGBA颜色 */
 :root {
-    --md-primary: #4a8bc2;
-    --md-primary-rgb: 74, 139, 194; /* 新增RGB变量 */
-    --md-on-primary: #FFFFFF;
-    --md-surface: #FEF7FF;
-    --md-on-surface: #1C1B1F;
-    --md-surface-variant: #E7E0EC;
-    --md-on-surface-variant: #49454F;
-    --md-outline: #79747E;
-    --md-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    --md-shadow-elevated: 0 4px 8px rgba(103, 80, 164, 0.1);
+    --md-primary: #1E88E5;           /* 更鲜明、现代的蓝色 */
+--md-primary-rgb: 30, 136, 229;
+--md-on-primary: #FFFFFF;
+
+--md-surface: #FFFFFF;           /* 纯白色背景 */
+--md-on-surface: #1A237E;        /* 深蓝灰色文字，确保可读性 */
+--md-surface-variant: #E3F2FD;   /* 非常浅的蓝色背景，用于卡片等 */
+--md-on-surface-variant: #37474F;/* 在浅蓝背景上的深灰蓝色文字 */
+
+--md-outline: #90A4AE;          /* 中性的蓝灰色作为轮廓色 */
+
+--md-shadow: 0 2px 4px rgba(30, 136, 229, 0.08); /* 阴影中加入微妙的蓝色调 */
+--md-shadow-elevated: 0 8px 16px rgba(30, 136, 229, 0.12);
 }
 
 * {
