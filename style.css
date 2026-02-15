@@ -1,25 +1,24 @@
 :root {
-    /* 主色：取自您提供的颜色，柔和的粉紫色 */
-    --md-primary: #FF98EA;
-    --md-primary-rgb: 255, 152, 234;
+    /* 主色：采用更接近 MD 标志粉的 #E91E63，但在明度上微调以贴合图片的柔和感 */
+    --md-primary: #F06292;           /* 比标准粉 (#E91E63) 更柔和，更贴近图片氛围 */
+    --md-primary-rgb: 240, 98, 146;
 
-    /* 主色上的文字：白色保证清晰度 */
+    /* 主色上的文字：白色 */
     --md-on-primary: #FFFFFF;
 
-    /* 表面色彩：与插画背景呼应的浅粉白色系 */
-    --md-surface: #FFF8FD;           /* 极浅的粉白，作为主背景 */
-    --md-on-surface: #3C293B;        /* 深紫灰色文字，优雅且可读性好 */
-    --md-surface-variant: #FFECF9;   /* 稍带粉调的背景变体，用于卡片、层叠面板 */
+    /* 表面色彩：以图片背景为灵感，构建层次 */
+    --md-surface: #FFF5F8;           /* 极浅的粉白，作为主背景，呼应图片背景的粉白色调 */
+    --md-on-surface: #3C293B;        /* 深紫灰色，确保在浅粉背景上的可读性，与发色形成色系统一 */
+    --md-surface-variant: #FFEBEE;   /* 标准 Material Pink 50，作为卡片等容器的背景 */
     --md-on-surface-variant: #6A546A;/* 在 surface-variant 上的次级文字色 */
 
-    /* 轮廓与边框：柔和的粉紫色，降低对比度 */
-    --md-outline: #D7A6CB;
+    /* 轮廓与分隔线：采用与图片中线条装饰相协调的淡粉色 */
+    --md-outline: #F8BBD0;           /* 淡粉色，比轮廓更柔和 */
 
-    /* 阴影：融入主色调的粉紫色阴影，营造梦幻氛围 */
-    --md-shadow: 0 2px 6px rgba(255, 152, 234, 0.12);
-    --md-shadow-elevated: 0 8px 24px rgba(255, 152, 234, 0.18);
+    /* 阴影：融入主色调的粉紫色，创造细腻的深度 */
+    --md-shadow: 0 2px 6px rgba(240, 98, 146, 0.12);
+    --md-shadow-elevated: 0 8px 24px rgba(240, 98, 146, 0.16);
 }
-
 
 * {
     margin: 0;
