@@ -147,7 +147,7 @@
                 console.error('获取失败:', error);
                 document.getElementById('releasesContainer').innerHTML = `
                     <div class="error-state">
-                        <div class="icon">⚠️</div>
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
                         <h3 style="margin-bottom: 8px;">获取失败</h3>
                         <p style="margin-bottom: 16px;">${error.message}</p>
                         <button onclick="fetchReleases()" class="btn">重试</button>
@@ -181,7 +181,7 @@
             if (releases.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">📭</div>
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
                         <p>暂无 Releases</p>
                     </div>
                 `;
