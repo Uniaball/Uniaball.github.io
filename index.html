@@ -29,20 +29,18 @@
                     </a>
                     
                     <button onclick="showReadme()" class="btn" style="width: 100%;">
-                        <span>Uniaball.github.io</span>
-                        <small style="opacity: 0.8;">README</small>
+                        <span>README</span>
                     </button>
                 </div>
             </div>
             
-            <div id="readmeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-                <div class="card" style="max-width: 800px; max-height: 80vh; overflow: auto; position: relative;">
-                    <button onclick="closeReadme()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--md-outline); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+            <div id="readmeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+                <div class="card" style="max-width: 90vw; max-height: 90vh; width: 800px; overflow: auto; position: relative;">
+                    <button onclick="closeReadme()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--md-outline); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 10;">
                         <i class="material-icons">close</i>
                     </button>
-                    <div id="readmeContent" class="loading">
-                        <div class="spinner"></div>
-                        <p>正在加载 README...</p>
+                    <div id="readmeContent">
+                        <!-- README内容将动态加载到这里 -->
                     </div>
                 </div>
             </div>
@@ -68,41 +66,70 @@
             `;
             
             try {
-                const response = await fetch('https://api.github.com/repos/Uniaball/Uniaball.github.io/readme');
+                const response = await fetch('https://api.github.com/repos/Uniaball/Uniaball.github.io/readme', {
+                    headers: {
+                        'Accept': 'application/vnd.github.v3.raw+json'
+                    }
+                });
                 
                 if (!response.ok) {
                     throw new Error(`GitHub API 请求失败 (状态码: ${response.status})`);
                 }
                 
-                const data = await response.json();
+                const markdownText = await response.text();
                 
-                if (!data.content) {
+                if (!markdownText) {
                     throw new Error('未找到 README 内容');
                 }
                 
-                const markdown = atob(data.content);
-                const html = marked.parse(markdown);
+                // 配置 marked 选项，确保中文和符号正确显示
+                marked.setOptions({
+                    gfm: true,
+                    breaks: true,
+                    langPrefix: 'language-',
+                    highlight: function(code, lang) {
+                        return code;
+                    }
+                });
+                
+                const html = marked.parse(markdownText);
                 
                 content.innerHTML = `
                     <div style="padding: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                            <h2 style="font-size: 24px; font-weight: 400; color: var(--md-primary);">Uniaball.github.io README</h2>
-                            <a href="https://github.com/Uniaball/Uniaball.github.io" target="_blank" class="btn btn-outline" style="padding: 8px 16px;">
-                                查看仓库
+                            <h2 style="font-size: 24px; font-weight: 400; color: var(--md-primary);">README</h2>
+                            <a href="https://github.com/Uniaball/Uniaball.github.io" target="_blank" class="btn btn-outline" style="padding: 8px 16px; display: flex; align-items: center; gap: 4px;">
+                                <i class="material-icons" style="font-size: 16px;">open_in_new</i>
+                                <span>查看仓库</span>
                             </a>
                         </div>
-                        <div style="background: var(--md-surface-variant); border-radius: 12px; padding: 24px; font-size: 14px; line-height: 1.6;">
+                        <div class="markdown-content" style="background: var(--md-surface-variant); border-radius: 12px; padding: 24px; font-size: 14px; line-height: 1.6; overflow-wrap: break-word;">
                             ${html}
                         </div>
                     </div>
                 `;
                 
+                // 添加样式确保内容正确显示
+                const style = document.createElement('style');
+                style.textContent = `
+                    .markdown-content {
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+                        word-wrap: break-word;
+                        overflow-wrap: break-word;
+                    }
+                    .markdown-content pre,
+                    .markdown-content code {
+                        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, 'Courier New', monospace;
+                    }
+                `;
+                document.head.appendChild(style);
+                
             } catch (error) {
                 content.innerHTML = `
-                    <div class="error-state">
-                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
-                        <h3 style="margin-bottom: 8px;">加载失败</h3>
-                        <p style="margin-bottom: 16px;">${error.message}</p>
+                    <div style="padding: 40px; text-align: center;">
+                        <i class="material-icons" style="font-size: 48px; color: #C62828; margin-bottom: 16px;">warning</i>
+                        <h3 style="margin-bottom: 8px; color: #C62828;">加载失败</h3>
+                        <p style="margin-bottom: 16px; color: var(--md-on-surface-variant);">${error.message}</p>
                         <button onclick="showReadme()" class="btn">重试</button>
                     </div>
                 `;
@@ -111,10 +138,19 @@
         
         function closeReadme() {
             document.getElementById('readmeModal').style.display = 'none';
+            document.getElementById('readmeContent').innerHTML = '';
         }
         
+        // ESC键关闭模态框
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
+                closeReadme();
+            }
+        });
+        
+        // 点击模态框背景关闭
+        document.getElementById('readmeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
                 closeReadme();
             }
         });
