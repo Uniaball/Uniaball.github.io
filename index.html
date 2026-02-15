@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenJDK Android 构建下载器</title>
+    <!-- Beer CSS - Material Design 3 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/beercss@3.5.0/dist/cdn/beer.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/beercss@3.5.0/dist/cdn/beer.min.js" type="module"></script>
+    <style>
+        :root {
+            --primary: #6750A4;
+            --on-primary: #FFFFFF;
+            --surface: #FEF7FF;
+            --on-surface: #1C1B1F;
+        }
+        
+        body {
+            background-color: var(--surface);
+            color: var(--on-surface);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-top: 32px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 16px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .builds-list {
+            margin-top: 24px;
+        }
+        
+        .build-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+        
+        .build-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .build-info {
+            flex: 1;
+        }
+        
+        .build-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .build-meta {
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background-color: #FFEBEE;
+            color: #C62828;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            padding: 24px;
+            color: #666;
+            font-size: 0.875rem;
+            border-top: 1px solid #eee;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 24px 16px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .control-group {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OpenJDK Android 构建</h1>
+            <p>从 Uniaball/OpenJDK-Android 仓库的 GitHub Actions 下载最新构建版本</p>
+        </div>
+        
+        <div class="card">
+            <h2 class="section-title">选择版本</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label class="field">
+                        <select id="versionSelect" class="border">
+                            <option value="" disabled selected>请选择 OpenJDK 版本</option>
+                            <option value="17">OpenJDK 17</option>
+                            <option value="21">OpenJDK 21</option>
+                            <option value="25">OpenJDK 25</option>
+                            <option value="26">OpenJDK 26</option>
+                            <option value="27">OpenJDK 27</option>
+                        </select>
+                    </label>
+                </div>
+                <button id="fetchBtn" class="button primary round" onclick="fetchBuilds()">
+                    <i>download</i>
+                    <span>获取构建</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="section-title">可用构建</h2>
+            <div id="buildsContainer">
+                <div class="empty-state">
+                    <p>请先选择 OpenJDK 版本并点击"获取构建"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>构建来自 <a href="https://github.com/Uniaball/OpenJDK-Android" target="_blank">Uniaball/OpenJDK-Android</a> 仓库的 GitHub Actions</p>
+            <p>本页面仅提供下载功能，OpenJDK 构建由原仓库维护者提供</p>
+        </div>
+    </div>
+
+    <script>
+        // GitHub API 配置
+        const REPO_OWNER = 'Uniaball';
+        const REPO_NAME = 'OpenJDK-Android';
+        const GITHUB_API = 'https://api.github.com';
+        
+        // 缓存构建数据
+        let cachedBuilds = {};
+        
+        // DOM 元素
+        const versionSelect = document.getElementById('versionSelect');
+        const fetchBtn = document.getElementById('fetchBtn');
+        const buildsContainer = document.getElementById('buildsContainer');
+        
+        // 显示加载状态
+        function showLoading() {
+            buildsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>正在获取构建列表...</p>
+                </div>
+            `;
+        }
+        
+        // 显示错误信息
+        function showError(message) {
+            buildsContainer.innerHTML = `
+                <div class="error">
+                    <p><strong>错误:</strong> ${message}</p>
+                    <p>请检查网络连接或稍后重试</p>
+                </div>
+            `;
+        }
+        
+        // 显示空状态
+        function showEmptyState(message = '没有找到可用的构建') {
+            buildsContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 获取构建列表
+        async function fetchBuilds() {
+            const version = versionSelect.value;
+            
+            if (!version) {
+                alert('请先选择 OpenJDK 版本');
+                return;
+            }
+            
+            // 检查缓存
+            if (cachedBuilds[version]) {
+                displayBuilds(cachedBuilds[version], version);
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // 获取 GitHub Actions runs
+                const response = await fetch(
+                    `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?per_page=50`,
+                    {
+                        headers: {
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API 请求失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // 过滤包含版本号的 runs
+                const versionRuns = data.workflow_runs.filter(run => {
+                    const runName = run.name || '';
+                    return runName.includes(`JDK${version}`) || 
+                           runName.includes(`jdk${version}`) ||
+                           runName.includes(`openjdk${version}`);
+                });
+                
+                if (versionRuns.length === 0) {
+                    showEmptyState(`未找到 OpenJDK ${version} 的构建`);
+                    return;
+                }
+                
+                // 获取每个 run 的 artifacts
+                const builds = [];
+                
+                for (const run of versionRuns.slice(0, 10)) { // 限制前10个
+                    try {
+                        const artifactsResponse = await fetch(
+                            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/artifacts`,
+                            {
+                                headers: {
+                                    'Accept': 'application/vnd.github.v3+json'
+                                }
+                            }
+                        );
+                        
+                        if (artifactsResponse.ok) {
+                            const artifactsData = await artifactsResponse.json();
+                            
+                            if (artifactsData.artifacts && artifactsData.artifacts.length > 0) {
+                                artifactsData.artifacts.forEach(artifact => {
+                                    builds.push({
+                                        id: artifact.id,
+                                        name: artifact.name,
+                                        runId: run.id,
+                                        runName: run.name,
+                                        createdAt: artifact.created_at,
+                                        updatedAt: artifact.updated_at,
+                                        sizeInBytes: artifact.size_in_bytes,
+                                        downloadUrl: artifact.archive_download_url,
+                                        workflowName: run.name,
+                                        runNumber: run.run_number,
+                                        status: run.status,
+                                        conclusion: run.conclusion
+                                    });
+                                });
+                            }
+                        }
+                    } catch (error) {
+                        console.warn(`获取 artifacts 失败: ${error.message}`);
+                    }
+                }
+                
+                if (builds.length === 0) {
+                    showEmptyState(`OpenJDK ${version} 的构建没有可用的 artifacts`);
+                    return;
+                }
+                
+                // 按创建时间排序（最新的在前）
+                builds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                // 缓存结果
+                cachedBuilds[version] = builds;
+                
+                // 显示构建列表
+                displayBuilds(builds, version);
+                
+            } catch (error) {
+                console.error('获取构建失败:', error);
+                showError(error.message);
+            }
+        }
+        
+        // 显示构建列表
+        function displayBuilds(builds, version) {
+            if (builds.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            let html = `
+                <div class="builds-list">
+                    <p style="margin-bottom: 16px; color: #666;">
+                        找到 ${builds.length} 个 OpenJDK ${version} 构建
+                    </p>
+            `;
+            
+            builds.forEach(build => {
+                const sizeMB = (build.sizeInBytes / (1024 * 1024)).toFixed(2);
+                const formattedDate = formatDate(build.createdAt);
+                const statusColor = build.conclusion === 'success' ? '#4CAF50' : 
+                                  build.conclusion === 'failure' ? '#F44336' : '#FF9800';
+                
+                html += `
+                    <div class="build-item">
+                        <div class="build-info">
+                            <div class="build-name">${build.name}</div>
+                            <div class="build-meta">
+                                <span>工作流: ${build.workflowName}</span> • 
+                                <span>运行号: #${build.runNumber}</span> • 
+                                <span>${formattedDate}</span> • 
+                                <span>${sizeMB} MB</span> • 
+                                <span style="color: ${statusColor}">${build.conclusion || build.status}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="${build.downloadUrl}" 
+                               download="${build.name}.zip" 
+                               class="button primary small round"
+                               onclick="trackDownload('${build.name}', '${version}')">
+                                <i>download</i>
+                                <span>下载</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            buildsContainer.innerHTML = html;
+        }
+        
+        // 跟踪下载（可选功能）
+        function trackDownload(buildName, version) {
+            console.log(`下载: ${buildName} (OpenJDK ${version})`);
+            // 这里可以添加 analytics 跟踪代码
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加版本选择变化监听
+            versionSelect.addEventListener('change', function() {
+                if (this.value && cachedBuilds[this.value]) {
+                    displayBuilds(cachedBuilds[this.value], this.value);
+                }
+            });
+            
+            // 添加回车键支持
+            versionSelect.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    fetchBuilds();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
