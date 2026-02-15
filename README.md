@@ -15,10 +15,13 @@
 # 项目结构
 ```
 webside_root/
+├── assets/
+│   └── background.png
 ├── index.html
 ├── desktopglues.html
 ├── openjdk.html
 └── style.css
+
 ```
 
 # 技术栈
