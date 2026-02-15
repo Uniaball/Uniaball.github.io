@@ -5,26 +5,21 @@
     --md-secondary: #ff8a65;
     --md-secondary-rgb: 255, 138, 101;
     
-    /* 表面颜色 - 浅灰色调 */
     --md-surface: #f8f9fa;
     --md-surface-rgb: 248, 249, 250;
     --md-surface-container: #f0f2f5;
     --md-surface-container-rgb: 240, 242, 245;
     
-    /* 文字颜色 */
     --md-on-surface: #2c3e50;
     --md-on-surface-variant: #5d6d7e;
     --md-on-primary: #ffffff;
     
-    /* 边框和轮廓 */
     --md-outline: #bdc3c7;
     --md-outline-rgb: 189, 195, 199;
     
-    /* 阴影 */
     --md-shadow-color: rgba(44, 62, 80, 0.1);
 }
 
-/* 基础重置 */
 * {
     margin: 0;
     padding: 0;
@@ -43,22 +38,7 @@ body {
     line-height: 1.6;
 }
 
-/* 添加柔和的遮罩层 */
-.container::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        135deg, 
-        rgba(248, 249, 250, 0.7) 0%, 
-        rgba(240, 242, 245, 0.85) 100%
-    );
-    z-index: -1;
-}
-
+/* 移除遮罩层，直接展示背景 */
 .container {
     position: relative;
     max-width: 1200px;
@@ -67,12 +47,12 @@ body {
     min-height: 100vh;
 }
 
-/* 卡片样式 - 半透明效果 */
+/* 卡片样式 - 进一步提高透明度 */
 .card {
-    background-color: rgba(255, 255, 255, 0.5) !important;
+    background-color: rgba(255, 255, 255, 0.4) !important; /* 从0.5调整为0.4 */
     backdrop-filter: blur(15px) saturate(180%);
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 边框也调高透明度 */
     box-shadow: 
         0 10px 40px rgba(44, 62, 80, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -82,13 +62,12 @@ body {
     overflow: hidden;
 }
 
-/* 卡片悬停效果 */
 .card:hover {
     transform: translateY(-4px);
     box-shadow: 
         0 16px 56px rgba(74, 139, 194, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    background-color: rgba(255, 255, 255, 0.85) !important;
+    background-color: rgba(255, 255, 255, 0.6) !important; /* 悬停时也提高透明度 */
 }
 
 /* 按钮样式 */
@@ -149,7 +128,7 @@ body {
     opacity: 0.9;
 }
 
-/* MD3 文本输入/选择框 */
+/* 输入框和选择框 */
 .select-container {
     position: relative;
     flex: 1;
@@ -168,7 +147,7 @@ body {
 .select {
     width: 100%;
     padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.6); /* 从0.8调整为0.6 */
     backdrop-filter: blur(10px);
     border: 1px solid var(--md-outline);
     border-radius: 12px;
@@ -186,9 +165,9 @@ body {
     padding: 13px 15px;
 }
 
-/* MD3 列表项 */
+/* 列表项 */
 .list-item {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.6); /* 从0.8调整为0.6 */
     backdrop-filter: blur(10px);
     border-radius: 12px;
     padding: 20px;
@@ -213,7 +192,7 @@ body {
     color: var(--md-on-surface-variant);
 }
 
-/* MD3 标签 */
+/* 标签 */
 .chip {
     display: inline-flex;
     align-items: center;
@@ -327,7 +306,7 @@ body {
     color: var(--md-primary);
 }
 
-/* 文字样式调整 */
+/* 文字样式 */
 h1, h2, h3, h4 {
     color: var(--md-on-surface);
     font-weight: 600;
@@ -361,7 +340,7 @@ a:not(.btn):hover {
 
 /* 其他页面内容区域 */
 .content-area {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.5); /* 从0.7调整为0.5 */
     backdrop-filter: blur(12px);
     border-radius: 16px;
     padding: 24px;
@@ -374,24 +353,24 @@ a:not(.btn):hover {
     .container {
         padding: 16px;
     }
-    
+
     .card {
         padding: 24px;
         border-radius: 16px;
     }
-    
+
     h1 {
         font-size: 28px;
     }
-    
+
     .btn {
         padding: 16px 24px;
     }
-    
+
     .flex {
         flex-direction: column;
     }
-    
+
     .select-container {
         width: 100%;
     }
@@ -413,7 +392,7 @@ a:not(.btn):hover {
     animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* 图标颜色调整 */
+/* 图标颜色 */
 .material-icons {
     color: var(--md-primary);
     transition: color 0.3s ease;
@@ -423,7 +402,7 @@ a:not(.btn):hover {
     color: var(--md-secondary);
 }
 
-/* 版本信息样式 */
+/* 版本信息 */
 .version-info {
     color: var(--md-on-surface-variant);
     font-size: 14px;
