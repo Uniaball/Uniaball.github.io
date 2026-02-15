@@ -26,6 +26,16 @@ body {
     line-height: 1.5;
 }
 
+/* 添加页面加载动画 */
+body {
+    opacity: 0;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -200,6 +210,12 @@ body {
     color: var(--md-on-surface-variant);
 }
 
+.empty-state .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
 .error-state {
     text-align: center;
     padding: 32px;
@@ -251,12 +267,36 @@ body {
     margin-bottom: 24px;
 }
 
+.mb-8 {
+    margin-bottom: 8px;
+}
+
+.mb-32 {
+    margin-bottom: 32px;
+}
+
+.mt-32 {
+    margin-top: 32px;
+}
+
+.p-24 {
+    padding: 24px;
+}
+
+.p-48 {
+    padding: 48px;
+}
+
 .text-center {
     text-align: center;
 }
 
 .text-primary {
     color: var(--md-primary);
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--md-surface-variant);
 }
 
 /* 模态框样式 - 修复版 */
@@ -274,11 +314,6 @@ body {
     padding: 20px;
     backdrop-filter: blur(4px);
     animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 .modal-content {
@@ -440,6 +475,23 @@ body {
 .readme-content th {
     background: var(--md-surface-variant);
     font-weight: 500;
+}
+
+/* 错误状态图标 */
+.error-icon {
+    font-size: 48px !important;
+    color: #C62828 !important;
+    margin-bottom: 16px !important;
+}
+
+.error-title {
+    margin-bottom: 8px !important;
+    color: #C62828 !important;
+}
+
+.error-message {
+    margin-bottom: 16px !important;
+    color: var(--md-on-surface-variant) !important;
 }
 
 /* 响应式设计 */
