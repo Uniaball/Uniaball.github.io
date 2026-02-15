@@ -25,7 +25,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 24px 16px;
         }
@@ -149,6 +149,72 @@
             vertical-align: middle;
         }
         
+        .manual-download {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+        
+        .manual-inputs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .manual-input {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .info-box {
+            background-color: #E8F5E9;
+            border-left: 4px solid #4CAF50;
+            padding: 16px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box p {
+            margin: 8px 0;
+            color: #2E7D32;
+        }
+        
+        .tab-container {
+            margin-bottom: 24px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 24px;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 padding: 16px;
@@ -171,6 +237,10 @@
                 align-items: flex-start;
                 gap: 12px;
             }
+            
+            .manual-inputs {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -178,39 +248,149 @@
     <div class="container">
         <div class="header">
             <h1>OpenJDK Android 构建</h1>
-            <p>从 Uniaball/OpenJDK-Android 仓库的 GitHub Actions 下载最新构建版本</p>
+            <p>从 Uniaball/OpenJDK-Android 仓库下载最新构建版本</p>
             <p style="font-size: 0.9rem; color: #4CAF50; margin-top: 8px;">
                 <i>check_circle</i> 使用 nightly.link 服务，无需 GitHub 登录即可下载
             </p>
         </div>
         
-        <div class="card">
-            <h2 class="section-title">选择版本</h2>
-            <div class="controls">
-                <div class="control-group">
-                    <label class="field">
-                        <select id="versionSelect" class="border">
-                            <option value="" disabled selected>请选择 OpenJDK 版本</option>
-                            <option value="17">OpenJDK 17</option>
-                            <option value="21">OpenJDK 21</option>
-                            <option value="25">OpenJDK 25</option>
-                            <option value="26">OpenJDK 26</option>
-                            <option value="27">OpenJDK 27</option>
-                        </select>
-                    </label>
-                </div>
-                <button id="fetchBtn" class="button primary round" onclick="fetchBuilds()">
-                    <i>search</i>
-                    <span>获取构建</span>
-                </button>
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="switchTab('auto')">自动获取</button>
+                <button class="tab-button" onclick="switchTab('manual')">手动下载</button>
+                <button class="tab-button" onclick="switchTab('direct')">直接链接</button>
             </div>
-        </div>
-        
-        <div class="card">
-            <h2 class="section-title">可用构建</h2>
-            <div id="buildsContainer">
-                <div class="empty-state">
-                    <p>请先选择 OpenJDK 版本并点击"获取构建"</p>
+            
+            <!-- 自动获取标签页 -->
+            <div id="tab-auto" class="tab-content active">
+                <div class="card">
+                    <h2 class="section-title">自动获取构建列表</h2>
+                    <div class="info-box">
+                        <p><strong>说明：</strong>此功能通过 GitHub API 获取可用的构建列表，然后使用 nightly.link 提供下载链接。</p>
+                        <p>需要 GitHub API 调用以获取构建信息，但下载时无需登录。</p>
+                    </div>
+                    
+                    <div class="controls">
+                        <div class="control-group">
+                            <label class="field">
+                                <select id="versionSelect" class="border">
+                                    <option value="" disabled selected>请选择 OpenJDK 版本</option>
+                                    <option value="17">OpenJDK 17</option>
+                                    <option value="21">OpenJDK 21</option>
+                                    <option value="25">OpenJDK 25</option>
+                                    <option value="26">OpenJDK 26</option>
+                                    <option value="27">OpenJDK 27</option>
+                                </select>
+                            </label>
+                        </div>
+                        <button id="fetchBtn" class="button primary round" onclick="fetchBuilds()">
+                            <i>search</i>
+                            <span>获取构建</span>
+                        </button>
+                    </div>
+                    
+                    <div id="buildsContainer">
+                        <div class="empty-state">
+                            <p>请先选择 OpenJDK 版本并点击"获取构建"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 手动下载标签页 -->
+            <div id="tab-manual" class="tab-content">
+                <div class="card">
+                    <h2 class="section-title">手动下载构建</h2>
+                    <div class="info-box">
+                        <p><strong>说明：</strong>直接使用 nightly.link 服务下载，无需 GitHub API 调用。</p>
+                        <p>需要从 GitHub Actions 页面获取 Run ID 和 Artifact 名称。</p>
+                    </div>
+                    
+                    <div class="manual-download">
+                        <div class="manual-inputs">
+                            <div class="manual-input">
+                                <label class="field">
+                                    <input type="text" id="runId" class="border" placeholder="GitHub Run ID">
+                                    <span class="label">Run ID</span>
+                                </label>
+                            </div>
+                            <div class="manual-input">
+                                <label class="field">
+                                    <input type="text" id="artifactName" class="border" placeholder="Artifact 名称">
+                                    <span class="label">Artifact 名称</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button class="button primary round" onclick="manualDownload()">
+                            <i>download</i>
+                            <span>生成下载链接</span>
+                        </button>
+                        
+                        <div id="manualResult" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 直接链接标签页 -->
+            <div id="tab-direct" class="tab-content">
+                <div class="card">
+                    <h2 class="section-title">常用构建直接链接</h2>
+                    <div class="info-box">
+                        <p><strong>说明：</strong>以下是一些常用构建的 nightly.link 直接下载链接。</p>
+                        <p>这些链接可能会过期，建议使用自动获取或手动下载功能。</p>
+                    </div>
+                    
+                    <div class="builds-list">
+                        <div class="build-item">
+                            <div class="build-info">
+                                <div class="build-name">OpenJDK 17 最新构建</div>
+                                <div class="build-meta">需要从 GitHub Actions 获取最新的 Run ID</div>
+                            </div>
+                            <div>
+                                <button class="button small round" onclick="showDirectLinkHelp()">
+                                    <i>info</i>
+                                    <span>如何获取</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="build-item">
+                            <div class="build-info">
+                                <div class="build-name">OpenJDK 21 最新构建</div>
+                                <div class="build-meta">需要从 GitHub Actions 获取最新的 Run ID</div>
+                            </div>
+                            <div>
+                                <button class="button small round" onclick="showDirectLinkHelp()">
+                                    <i>info</i>
+                                    <span>如何获取</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="build-item">
+                            <div class="build-info">
+                                <div class="build-name">OpenJDK 25 最新构建</div>
+                                <div class="build-meta">需要从 GitHub Actions 获取最新的 Run ID</div>
+                            </div>
+                            <div>
+                                <button class="button small round" onclick="showDirectLinkHelp()">
+                                    <i>info</i>
+                                    <span>如何获取</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="manual-download">
+                        <h3 style="margin-bottom: 16px;">nightly.link URL 格式</h3>
+                        <div style="background: #f5f5f5; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 0.9rem;">
+                            https://nightly.link/Uniaball/OpenJDK-Android/actions/runs/<strong>{run_id}</strong>/<strong>{artifact_name}</strong>.zip
+                        </div>
+                        <p style="margin-top: 12px; color: #666; font-size: 0.9rem;">
+                            将 <strong>{run_id}</strong> 替换为 GitHub Actions Run ID，<strong>{artifact_name}</strong> 替换为 Artifact 名称
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,46 +403,64 @@
     </div>
 
     <script>
-        // GitHub API 配置
+        // GitHub 仓库信息
         const REPO_OWNER = 'Uniaball';
         const REPO_NAME = 'OpenJDK-Android';
-        const GITHUB_API = 'https://api.github.com';
         
         // 缓存构建数据
         let cachedBuilds = {};
         
-        // DOM 元素
-        const versionSelect = document.getElementById('versionSelect');
-        const fetchBtn = document.getElementById('fetchBtn');
-        const buildsContainer = document.getElementById('buildsContainer');
+        // 标签页切换
+        function switchTab(tabName) {
+            // 更新按钮状态
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // 激活选中的标签页
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
         
         // 显示加载状态
-        function showLoading() {
-            buildsContainer.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>正在获取构建列表...</p>
-                </div>
-            `;
+        function showLoading(containerId = 'buildsContainer') {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>正在获取构建列表...</p>
+                    </div>
+                `;
+            }
         }
         
         // 显示错误信息
-        function showError(message) {
-            buildsContainer.innerHTML = `
-                <div class="error">
-                    <p><strong>错误:</strong> ${message}</p>
-                    <p>请检查网络连接或稍后重试</p>
-                </div>
-            `;
+        function showError(message, containerId = 'buildsContainer') {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="error">
+                        <p><strong>错误:</strong> ${message}</p>
+                        <p>请检查网络连接或稍后重试</p>
+                    </div>
+                `;
+            }
         }
         
         // 显示空状态
-        function showEmptyState(message = '没有找到可用的构建') {
-            buildsContainer.innerHTML = `
-                <div class="empty-state">
-                    <p>${message}</p>
-                </div>
-            `;
+        function showEmptyState(message = '没有找到可用的构建', containerId = 'buildsContainer') {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>${message}</p>
+                    </div>
+                `;
+            }
         }
         
         // 格式化日期
@@ -279,16 +477,16 @@
         
         // 格式化文件大小
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
+            if (!bytes || bytes === 0) return '未知大小';
             const k = 1024;
             const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
         
-        // 获取构建列表
+        // 自动获取构建列表
         async function fetchBuilds() {
-            const version = versionSelect.value;
+            const version = document.getElementById('versionSelect').value;
             
             if (!version) {
                 alert('请先选择 OpenJDK 版本');
@@ -306,7 +504,7 @@
             try {
                 // 获取 GitHub Actions runs
                 const response = await fetch(
-                    `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?per_page=50`,
+                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?per_page=50`,
                     {
                         headers: {
                             'Accept': 'application/vnd.github.v3+json'
@@ -337,10 +535,10 @@
                 // 获取每个 run 的 artifacts
                 const builds = [];
                 
-                for (const run of versionRuns.slice(0, 15)) { // 限制前15个
+                for (const run of versionRuns.slice(0, 10)) {
                     try {
                         const artifactsResponse = await fetch(
-                            `${GITHUB_API}/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/artifacts`,
+                            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/artifacts`,
                             {
                                 headers: {
                                     'Accept': 'application/vnd.github.v3+json'
@@ -364,7 +562,7 @@
                                         createdAt: artifact.created_at,
                                         updatedAt: artifact.updated_at,
                                         sizeInBytes: artifact.size_in_bytes,
-                                        downloadUrl: nightlyLink, // 使用 nightly.link
+                                        downloadUrl: nightlyLink,
                                         workflowName: run.name,
                                         runNumber: run.run_number,
                                         status: run.status,
@@ -453,13 +651,57 @@
             });
             
             html += `</div>`;
-            buildsContainer.innerHTML = html;
+            document.getElementById('buildsContainer').innerHTML = html;
         }
         
-        // 跟踪下载（可选功能）
+        // 手动下载功能
+        function manualDownload() {
+            const runId = document.getElementById('runId').value.trim();
+            const artifactName = document.getElementById('artifactName').value.trim();
+            
+            if (!runId || !artifactName) {
+                alert('请输入 Run ID 和 Artifact 名称');
+                return;
+            }
+            
+            // 生成 nightly.link URL
+            const nightlyLink = `https://nightly.link/${REPO_OWNER}/${REPO_NAME}/actions/runs/${runId}/${artifactName}.zip`;
+            
+            const resultDiv = document.getElementById('manualResult');
+            resultDiv.innerHTML = `
+                <div class="info-box">
+                    <p><strong>下载链接已生成：</strong></p>
+                    <div style="margin: 12px 0; padding: 12px; background: #f5f5f5; border-radius: 4px; font-family: monospace; word-break: break-all;">
+                        ${nightlyLink}
+                    </div>
+                    <a href="${nightlyLink}" 
+                       download="${artifactName}.zip" 
+                       class="button primary round"
+                       target="_blank">
+                        <i>download</i>
+                        <span>立即下载</span>
+                    </a>
+                    <p style="margin-top: 12px; font-size: 0.9rem;">
+                        <i>info</i> 此链接直接使用 nightly.link 服务，无需 GitHub API 调用
+                    </p>
+                </div>
+            `;
+        }
+        
+        // 显示直接链接帮助
+        function showDirectLinkHelp() {
+            alert(`如何获取最新构建：
+1. 访问 https://github.com/Uniaball/OpenJDK-Android/actions
+2. 找到最新的成功构建（绿色对勾）
+3. 点击进入构建详情页
+4. 在 URL 中找到 run_id（如：1234567890）
+5. 在 Artifacts 部分找到 artifact 名称
+6. 使用手动下载功能输入这些信息`);
+        }
+        
+        // 跟踪下载
         function trackDownload(buildName, version) {
             console.log(`下载: ${buildName} (OpenJDK ${version})`);
-            // 这里可以添加 analytics 跟踪代码
             
             // 显示下载提示
             setTimeout(() => {
@@ -491,20 +733,6 @@
         
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 添加版本选择变化监听
-            versionSelect.addEventListener('change', function() {
-                if (this.value && cachedBuilds[this.value]) {
-                    displayBuilds(cachedBuilds[this.value], this.value);
-                }
-            });
-            
-            // 添加回车键支持
-            versionSelect.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    fetchBuilds();
-                }
-            });
-            
             // 添加 CSS 动画
             const style = document.createElement('style');
             style.textContent = `
@@ -516,8 +744,30 @@
                     from { opacity: 1; transform: translateY(0); }
                     to { opacity: 0; transform: translateY(10px); }
                 }
+                .spinner {
+                    display: inline-block;
+                    width: 40px;
+                    height: 40px;
+                    border: 3px solid rgba(0,0,0,0.1);
+                    border-radius: 50%;
+                    border-top-color: var(--primary);
+                    animation: spin 1s ease-in-out infinite;
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
             `;
             document.head.appendChild(style);
+            
+            // 添加快捷键支持
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.target.id === 'runId') {
+                    document.getElementById('artifactName').focus();
+                }
+                if (e.key === 'Enter' && e.target.id === 'artifactName') {
+                    manualDownload();
+                }
+            });
         });
     </script>
 </body>
