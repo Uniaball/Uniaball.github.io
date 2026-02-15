@@ -10,10 +10,9 @@
     --md-surface-container: #f0f2f5;
     --md-surface-container-rgb: 240, 242, 245;
     
-    /* 加深文字颜色以适配透明设计 */
-    --md-on-surface: #1a2536; /* 深蓝灰色 */
-    --md-on-surface-variant: #4a5568; /* 中深灰色 */
-    --md-on-primary: #0d1b2a; /* 按钮上的深色文字 */
+    --md-on-surface: #1a2536;
+    --md-on-surface-variant: #4a5568;
+    --md-on-primary: #ffffff;
     
     --md-outline: #bdc3c7;
     --md-outline-rgb: 189, 195, 199;
@@ -39,122 +38,106 @@ body {
     line-height: 1.6;
 }
 
-/* 容器样式 */
-.container {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px;
-    min-height: 100vh;
-}
-
-/* 卡片样式 - 高透明度 */
-.card {
-    background-color: rgba(255, 255, 255, 0.4) !important;
-    backdrop-filter: blur(15px) saturate(180%);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 
-        0 10px 40px rgba(44, 62, 80, 0.08),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    padding: 32px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    color: var(--md-on-surface);
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 
-        0 16px 56px rgba(74, 139, 194, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    background-color: rgba(255, 255, 255, 0.6) !important;
-}
-
-/* 按钮样式 - 半透明版本 */
-.btn {
-    background: linear-gradient(135deg, 
-        rgba(74, 139, 194, 0.8) 0%, 
-        rgba(107, 163, 217, 0.8) 100%);
-    backdrop-filter: blur(10px);
-    color: #1a2c3e; /* 深色文字 */
-    border: none;
-    border-radius: 16px;
-    padding: 18px 32px;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 
-        0 4px 20px rgba(44, 62, 80, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-.btn::before {
+/* 添加非常透明的遮罩层 */
+.container::before {
     content: '';
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: -100%;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.3), 
-        transparent
-    );
-    transition: left 0.6s;
+    background: rgba(255, 255, 255, 0.15); /* 很透明的白色遮罩 */
+    z-index: -1;
 }
 
+/* 恢复原始容器比例和布局 */
+.container {
+    max-width: 800px; /* 恢复原始宽度 */
+    margin: 0 auto;
+    padding: 24px 20px; /* 恢复原始padding */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 垂直居中 */
+}
+
+/* 卡片样式 - 恢复不透明状态 */
+.card {
+    background: white; /* 完全不透明 */
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--md-shadow);
+    border: 1px solid var(--md-surface-variant);
+    margin: 0 auto; /* 水平居中 */
+    max-width: 400px; /* 恢复原始卡片宽度 */
+    text-align: center;
+}
+
+/* 移除卡片悬停动画 */
+.card:hover {
+    box-shadow: var(--md-shadow); /* 保持原始阴影 */
+    transform: none; /* 不移位 */
+}
+
+/* 主按钮样式 - 保持不透明 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--md-primary); /* 原始不透明颜色 */
+    color: var(--md-on-primary);
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 40px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+
+/* 按钮悬停时仅颜色变深 */
 .btn:hover {
-    background: linear-gradient(135deg, 
-        rgba(255, 138, 101, 0.9) 0%, 
-        rgba(255, 171, 145, 0.9) 100%);
-    transform: translateY(-2px);
-    box-shadow: 
-        0 8px 32px rgba(255, 138, 101, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    color: #2c1810; /* 悬停时更深的文字颜色 */
+    background: #3a7ab2; /* 原始颜色变深 */
+    transform: none; /* 不移位 */
 }
 
-.btn:hover::before {
-    left: 100%;
+.btn:active {
+    background: #2a6aa2; /* 激活状态更深 */
 }
 
 .btn span {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 0;
 }
 
 .btn small {
-    font-size: 13px;
-    font-weight: 500;
-    opacity: 0.95;
-    color: inherit;
+    font-size: 12px;
+    opacity: 0.8;
 }
 
-/* 带外框的按钮变体 */
+/* 返回按钮/外框按钮 - 保持透明 */
 .btn-outline {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1); /* 透明背景 */
+    backdrop-filter: blur(5px);
     color: var(--md-primary);
-    border: 1.5px solid rgba(74, 139, 194, 0.4);
-    font-weight: 600;
+    border: 1px solid var(--md-outline);
 }
 
 .btn-outline:hover {
-    background: rgba(74, 139, 194, 0.15);
-    border-color: rgba(74, 139, 194, 0.7);
-    color: #1a2c3e;
+    background: rgba(74, 139, 194, 0.1); /* 悬停时略微加深 */
+    border-color: var(--md-primary);
+}
+
+/* 移除按钮流光效果 */
+.btn::before {
+    display: none;
 }
 
 /* 输入框和选择框 */
@@ -176,8 +159,7 @@ body {
 .select {
     width: 100%;
     padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
+    background: white;
     border: 1px solid var(--md-outline);
     border-radius: 12px;
     font-size: 16px;
@@ -196,17 +178,16 @@ body {
 
 /* 列表项 */
 .list-item {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
+    background: white;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 12px;
-    border: 1px solid rgba(189, 195, 199, 0.3);
+    border: 1px solid var(--md-surface-variant);
     transition: background-color 0.2s;
 }
 
 .list-item:hover {
-    background: rgba(74, 139, 194, 0.08);
+    background: rgba(103, 80, 164, 0.04);
 }
 
 .list-item-primary {
@@ -226,7 +207,7 @@ body {
     display: inline-flex;
     align-items: center;
     padding: 6px 12px;
-    background: rgba(189, 195, 199, 0.2);
+    background: var(--md-surface-variant);
     color: var(--md-on-surface-variant);
     border-radius: 8px;
     font-size: 12px;
@@ -236,7 +217,7 @@ body {
 }
 
 .chip-primary {
-    background: rgba(74, 139, 194, 0.15);
+    background: rgba(103, 80, 164, 0.12);
     color: var(--md-primary);
 }
 
@@ -253,7 +234,7 @@ body {
 .spinner {
     width: 48px;
     height: 48px;
-    border: 3px solid rgba(74, 139, 194, 0.1);
+    border: 3px solid rgba(103, 80, 164, 0.1);
     border-radius: 50%;
     border-top-color: var(--md-primary);
     animation: spin 1s linear infinite;
@@ -279,10 +260,10 @@ body {
 .error-state {
     text-align: center;
     padding: 32px;
-    background: rgba(255, 235, 238, 0.8);
+    background: #FFEBEE;
     color: #C62828;
     border-radius: 16px;
-    border: 1px solid rgba(239, 154, 154, 0.5);
+    border: 1px solid #EF9A9A;
 }
 
 .error-state .icon {
@@ -335,24 +316,21 @@ body {
     color: var(--md-primary);
 }
 
-/* 文字样式 */
+/* 文字样式调整 */
 h1, h2, h3, h4 {
-    color: #1a2536;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    color: var(--md-on-surface);
+    font-weight: 400; /* 恢复原始字重 */
 }
 
 h1 {
     font-size: 32px;
-    line-height: 1.2;
     margin-bottom: 8px;
 }
 
-p, .list-item-secondary, .version-info {
-    color: #4a5568;
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 1.6;
+p {
+    color: var(--md-on-surface-variant);
+    font-size: 14px; /* 恢复原始大小 */
+    line-height: 1.5;
 }
 
 /* 链接样式 */
@@ -370,12 +348,11 @@ a:not(.btn):hover {
 
 /* 其他页面内容区域 */
 .content-area {
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(12px);
+    background: white;
     border-radius: 16px;
     padding: 24px;
     margin-top: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--md-surface-variant);
 }
 
 /* 响应式设计 */
@@ -383,82 +360,40 @@ a:not(.btn):hover {
     .container {
         padding: 16px;
     }
-
+    
     .card {
         padding: 24px;
-        border-radius: 16px;
     }
-
-    h1 {
-        font-size: 28px;
-    }
-
-    .btn {
-        padding: 16px 24px;
-    }
-
+    
     .flex {
         flex-direction: column;
     }
-
+    
     .select-container {
         width: 100%;
     }
 }
 
-/* 动画效果 */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
+/* 移除入场动画 */
 .card, .btn, .content-area {
-    animation: fadeIn 0.6s ease-out forwards;
+    animation: none;
 }
 
-/* 图标颜色 */
+/* 图标颜色调整 */
 .material-icons {
     color: var(--md-primary);
-    transition: color 0.3s ease;
 }
 
-.card:hover .material-icons {
-    color: var(--md-secondary);
-}
-
-/* 版本信息 */
+/* 版本信息样式 */
 .version-info {
+    color: var(--md-on-surface-variant);
     font-size: 14px;
     opacity: 0.8;
     text-align: center;
     margin-top: 32px;
 }
 
-/* 卡片边框光效 */
+/* 移除卡片边框光效 */
 .card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 20px;
-    padding: 1px;
-    background: linear-gradient(135deg, 
-        rgba(74, 139, 194, 0.1), 
-        rgba(255, 255, 255, 0.3), 
-        rgba(255, 138, 101, 0.1)
-    );
-    -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+    display: none;
 }
