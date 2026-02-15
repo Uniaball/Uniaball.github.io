@@ -10,11 +10,13 @@
 - 支持渲染完整的 **Markdown** 格式
 
 # 项目结构
-` download-site/
+```
+webside_root/
 ├── index.html
 ├── desktopglues.html
 ├── openjdk.html
-└── style.css `
+└── style.css
+```
 
 # 技术栈
 - **HTML5 + CSS3** *Material Design 3 规范*
