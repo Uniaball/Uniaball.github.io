@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenJDK-Android 下载</title>
@@ -9,7 +10,10 @@
 <body>
     <div class="container">
         <header class="flex items-center gap-16 mb-24">
-            <a href="index.html" class="btn btn-outline" style="padding: 8px 16px;">← 返回</a>
+            <a href="index.html" class="btn btn-outline" style="padding: 8px 16px; display: flex; align-items: center; gap: 4px;">
+                <i class="material-icons" style="font-size: 18px;">arrow_back</i>
+                <span>返回</span>
+            </a>
             <div>
                 <h1 style="font-size: 24px; font-weight: 400;">OpenJDK-Android</h1>
                 <p style="color: var(--md-on-surface-variant); font-size: 14px;">GitHub Actions 构建下载</p>
@@ -35,7 +39,7 @@
             
             <div id="buildsContainer">
                 <div class="empty-state">
-                    <div class="icon">📦</div>
+                    <i class="material-icons" style="font-size: 48px; color: var(--md-on-surface-variant); margin-bottom: 16px;">inventory_2</i>
                     <p>选择版本并获取构建</p>
                 </div>
             </div>
@@ -52,7 +56,7 @@
             if (!version) {
                 document.getElementById('buildsContainer').innerHTML = `
                     <div class="error-state">
-                        <div class="icon">⚠️</div>
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
                         <p>请先选择版本</p>
                     </div>
                 `;
@@ -148,7 +152,7 @@
             } catch (error) {
                 document.getElementById('buildsContainer').innerHTML = `
                     <div class="error-state">
-                        <div class="icon">⚠️</div>
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
                         <p>${error.message}</p>
                         <button onclick="fetchBuilds()" class="btn" style="margin-top: 12px;">重试</button>
                     </div>
@@ -186,7 +190,7 @@
             if (builds.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="icon">📭</div>
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
                         <p>未找到 OpenJDK ${version} 的构建文件</p>
                     </div>
                 `;
