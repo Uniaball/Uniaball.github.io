@@ -1,6 +1,5 @@
 /* 基础样式和变量 */
 :root {
-    /* 主色调 - 基于蓝发少女壁纸的配色 */
     --md-primary: #4a8bc2;
     --md-primary-rgb: 74, 139, 194;
     --md-secondary: #ff8a65;
@@ -70,7 +69,7 @@ body {
 
 /* 卡片样式 - 半透明效果 */
 .card {
-    background-color: rgba(255, 255, 255, 0.75) !important;
+    background-color: rgba(255, 255, 255, 0.5) !important;
     backdrop-filter: blur(15px) saturate(180%);
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.4);
