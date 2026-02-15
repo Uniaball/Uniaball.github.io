@@ -1,19 +1,25 @@
-/* 添加CSS变量以支持RGBA颜色 */
 :root {
-    --md-primary: #1E88E5;           /* 更鲜明、现代的蓝色 */
---md-primary-rgb: 30, 136, 229;
---md-on-primary: #FFFFFF;
+    /* 主色：取自您提供的颜色，柔和的粉紫色 */
+    --md-primary: #FF98EA;
+    --md-primary-rgb: 255, 152, 234;
 
---md-surface: #FFFFFF;           /* 纯白色背景 */
---md-on-surface: #1A237E;        /* 深蓝灰色文字，确保可读性 */
---md-surface-variant: #E3F2FD;   /* 非常浅的蓝色背景，用于卡片等 */
---md-on-surface-variant: #37474F;/* 在浅蓝背景上的深灰蓝色文字 */
+    /* 主色上的文字：白色保证清晰度 */
+    --md-on-primary: #FFFFFF;
 
---md-outline: #90A4AE;          /* 中性的蓝灰色作为轮廓色 */
+    /* 表面色彩：与插画背景呼应的浅粉白色系 */
+    --md-surface: #FFF8FD;           /* 极浅的粉白，作为主背景 */
+    --md-on-surface: #3C293B;        /* 深紫灰色文字，优雅且可读性好 */
+    --md-surface-variant: #FFECF9;   /* 稍带粉调的背景变体，用于卡片、层叠面板 */
+    --md-on-surface-variant: #6A546A;/* 在 surface-variant 上的次级文字色 */
 
---md-shadow: 0 2px 4px rgba(30, 136, 229, 0.08); /* 阴影中加入微妙的蓝色调 */
---md-shadow-elevated: 0 8px 16px rgba(30, 136, 229, 0.12);
+    /* 轮廓与边框：柔和的粉紫色，降低对比度 */
+    --md-outline: #D7A6CB;
+
+    /* 阴影：融入主色调的粉紫色阴影，营造梦幻氛围 */
+    --md-shadow: 0 2px 6px rgba(255, 152, 234, 0.12);
+    --md-shadow-elevated: 0 8px 24px rgba(255, 152, 234, 0.18);
 }
+
 
 * {
     margin: 0;
