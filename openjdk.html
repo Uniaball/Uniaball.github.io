@@ -3,87 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenJDK-Android 下载</title>
+    <title>OpenJDK-Android</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>OpenJDK-Android Actions</h1>
-            <p>Android 平台的 OpenJDK 构建</p>
-            <a href="index.html" class="back-link">← 返回首页</a>
+        <header class="header">
+            <a href="index.html" class="back">←</a>
+            <h1>OpenJDK-Android</h1>
         </header>
         
-        <main>
-            <div class="repo-info">
-                <h2>Uniaball/OpenJDK-Android</h2>
-                <div class="repo-stats">
-                    <span>📦 GitHub Actions</span>
-                    <span>🤖 自动构建</span>
-                </div>
+        <main class="main">
+            <div class="control">
+                <select id="versionSelect" class="select">
+                    <option value="" disabled selected>选择版本</option>
+                    <option value="17">OpenJDK 17</option>
+                    <option value="21">OpenJDK 21</option>
+                    <option value="25">OpenJDK 25</option>
+                    <option value="26">OpenJDK 26</option>
+                    <option value="27">OpenJDK 27</option>
+                </select>
+                <button id="fetchBtn" class="button" onclick="fetchBuilds()">获取构建</button>
             </div>
             
-            <div class="info-box">
-                <h3>下载说明</h3>
-                <p>OpenJDK-Android 通过 GitHub Actions 自动构建，构建产物可通过以下方式下载：</p>
-                <ol>
-                    <li>访问 GitHub Actions 页面查看最新构建</li>
-                    <li>在成功的 workflow run 中下载 artifacts</li>
-                    <li>或使用 nightly.link 直接下载</li>
-                </ol>
-            </div>
-            
-            <div class="actions-container">
-                <div class="action-item">
-                    <h3>直接下载链接</h3>
-                    <div class="download-links">
-                        <a href="https://nightly.link/Uniaball/OpenJDK-Android/workflows/build/main" 
-                           target="_blank" class="btn primary large">
-                            📦 最新构建 (nightly.link)
-                        </a>
-                        <p class="note">此链接指向最新的构建产物</p>
-                    </div>
-                </div>
-                
-                <div class="action-item">
-                    <h3>GitHub Actions 页面</h3>
-                    <div class="action-links">
-                        <a href="https://github.com/Uniaball/OpenJDK-Android/actions" 
-                           target="_blank" class="btn">
-                            🔍 查看所有 Actions
-                        </a>
-                        <a href="https://github.com/Uniaball/OpenJDK-Android/actions/workflows/build.yml" 
-                           target="_blank" class="btn">
-                            ⚙️ 构建 workflow
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="action-item">
-                    <h3>手动下载步骤</h3>
-                    <div class="steps">
-                        <div class="step">
-                            <span class="step-number">1</span>
-                            <p>访问 <a href="https://github.com/Uniaball/OpenJDK-Android/actions" target="_blank">Actions 页面</a></p>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">2</span>
-                            <p>点击最新的成功构建 (绿色 ✓)</p>
-                        </div>
-                        <div class="step">
-                            <span class="step-number">3</span>
-                            <p>在 "Artifacts" 部分下载所需文件</p>
-                        </div>
-                    </div>
-                </div>
+            <div id="buildsContainer">
+                <div class="empty">请选择版本</div>
             </div>
         </main>
-        
-        <footer>
-            <p>数据来源: GitHub Actions · 仓库: <a href="https://github.com/Uniaball/OpenJDK-Android" target="_blank">Uniaball/OpenJDK-Android</a></p>
-        </footer>
     </div>
-    
-    <script src="script.js"></script>
+
+    <script>
+        const REPO_OWNER = 'Uniaball';
+        const REPO_NAME = 'OpenJDK-Android';
+        let cachedBuilds = {};
+        
+        function showLoading() {
+            document.getElementById('buildsContainer').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <div>加载中</div>
+                </div>
+            `;
+        }
+        
+        function showError(message) {
+            document.getElementById('buildsContainer').innerHTML = `
+                <div class="error">
+                    <div>${message}</div>
+                </div>
+            `;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        async function fetchBuilds() {
+            const version = document.getElementById('versionSelect').value;
+            if (!version) return;
+            
+            if (cachedBuilds[version]) {
+                displayBuilds(cachedBuilds[version], version);
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const response = await fetch(
+                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?per_page=30`
+                );
+                
+                if (!response.ok) throw new Error('请求失败');
+                
+                const data = await response.json();
+                const versionRuns = data.workflow_runs.filter(run => {
+                    const name = run.name || '';
+                    return name.includes(`JDK${version}`) || 
+                           name.includes(`jdk${version}`) ||
+                           name.includes(`openjdk${version}`);
+                });
+                
+                if (versionRuns.length === 0) {
+                    showError('无可用构建');
+                    return;
+                }
+                
+                const builds = [];
+                for (const run of versionRuns.slice(0, 5)) {
+                    try {
+                        const artifactsResponse = await fetch(
+                            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/artifacts`
+                        );
+                        
+                        if (artifactsResponse.ok) {
+                            const artifactsData = await artifactsResponse.json();
+                            if (artifactsData.artifacts?.length > 0) {
+                                artifactsData.artifacts.forEach(artifact => {
+                                    builds.push({
+                                        name: artifact.name,
+                                        runId: run.id,
+                                        createdAt: artifact.created_at,
+                                        downloadUrl: `https://nightly.link/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/${artifact.name}.zip`,
+                                        runNumber: run.run_number
+                                    });
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.warn(e);
+                    }
+                }
+                
+                if (builds.length === 0) {
+                    showError('无可用构建');
+                    return;
+                }
+                
+                builds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                cachedBuilds[version] = builds;
+                displayBuilds(builds, version);
+                
+            } catch (error) {
+                showError('获取失败');
+            }
+        }
+        
+        function displayBuilds(builds, version) {
+            const container = document.getElementById('buildsContainer');
+            
+            let html = `<div class="builds-title">OpenJDK ${version}</div>`;
+            
+            builds.forEach(build => {
+                const date = formatDate(build.createdAt);
+                html += `
+                    <div class="build-item">
+                        <div class="build-info">
+                            <div class="build-name">${build.name}</div>
+                            <div class="build-meta">#${build.runNumber} · ${date}</div>
+                        </div>
+                        <a href="${build.downloadUrl}" class="build-download" download>下载</a>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+    </script>
 </body>
 </html>

@@ -3,172 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DesktopGlues 下载</title>
+    <title>DesktopGlues</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>DesktopGlues Releases</h1>
-            <p>基于 MobileGlues 深度优化的桌面端 GL 实现</p>
-            <a href="index.html" class="back-link">← 返回首页</a>
+        <header class="header">
+            <a href="index.html" class="back">←</a>
+            <h1>DesktopGlues</h1>
         </header>
         
-        <main>
-            <div class="repo-info">
-                <h2>Uniaball/DesktopGlues</h2>
-                <div class="repo-stats">
-                    <span>⭐ 3 stars</span>
-                    <span>🍴 1 fork</span>
-                    <span>📦 4 releases</span>
-                </div>
-            </div>
-            
-            <div class="controls">
-                <button id="refreshBtn" class="btn primary">刷新 Releases</button>
-                <div class="loading" id="loading" style="display: none;">
+        <main class="main">
+            <div id="releasesContainer">
+                <div class="loading">
                     <div class="spinner"></div>
-                    <span>加载中...</span>
+                    <div>加载中</div>
                 </div>
-            </div>
-            
-            <div id="releasesContainer" class="releases-container">
-                <!-- Releases 将在这里动态加载 -->
             </div>
         </main>
-        
-        <footer>
-            <p>数据来源: GitHub API · 仓库: <a href="https://github.com/Uniaball/DesktopGlues" target="_blank">Uniaball/DesktopGlues</a></p>
-        </footer>
     </div>
-    
-    <script src="script.js"></script>
+
     <script>
-        // DesktopGlues 特定脚本
-        const REPO_OWNER = 'Uniaball';
-        const REPO_NAME = 'DesktopGlues';
-        
         async function fetchReleases() {
-            const container = document.getElementById('releasesContainer');
-            const loading = document.getElementById('loading');
-            
-            container.innerHTML = '';
-            loading.style.display = 'flex';
-            
             try {
-                const response = await fetch(
-                    `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`,
-                    {
-                        headers: {
-                            'Accept': 'application/vnd.github.v3+json',
-                            'User-Agent': 'Uniaball-Download-Site'
-                        }
-                    }
-                );
-                
-                if (!response.ok) {
-                    throw new Error(`请求失败: ${response.status}`);
-                }
+                const response = await fetch('https://api.github.com/repos/Uniaball/DesktopGlues/releases');
+                if (!response.ok) throw new Error('请求失败');
                 
                 const releases = await response.json();
-                
-                if (!releases || releases.length === 0) {
-                    container.innerHTML = '<div class="empty">暂无 Release</div>';
+                if (!releases?.length) {
+                    document.getElementById('releasesContainer').innerHTML = '<div class="empty">无 Release</div>';
                     return;
                 }
                 
-                // 显示 releases
-                releases.forEach(release => {
-                    const releaseDate = new Date(release.published_at || release.created_at);
-                    const formattedDate = releaseDate.toLocaleDateString('zh-CN', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    });
-                    
-                    const isPrerelease = release.prerelease;
-                    const isDraft = release.draft;
-                    
-                    let statusBadge = '';
-                    if (isDraft) {
-                        statusBadge = '<span class="tag draft">草稿</span>';
-                    } else if (isPrerelease) {
-                        statusBadge = '<span class="tag prerelease">预发布</span>';
-                    } else {
-                        statusBadge = '<span class="tag stable">正式版</span>';
-                    }
-                    
-                    // 解析 markdown 描述
-                    let descriptionHtml = '';
-                    if (release.body) {
-                        descriptionHtml = marked.parse(release.body);
-                    }
-                    
-                    const releaseElement = document.createElement('div');
-                    releaseElement.className = 'release-item';
-                    releaseElement.innerHTML = `
+                displayReleases(releases);
+            } catch (error) {
+                document.getElementById('releasesContainer').innerHTML = '<div class="error">获取失败</div>';
+            }
+        }
+        
+        function displayReleases(releases) {
+            const container = document.getElementById('releasesContainer');
+            let html = '';
+            
+            releases.forEach(release => {
+                const date = new Date(release.published_at).toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                
+                const tag = release.prerelease ? '预发布' : release.draft ? '草稿' : '正式版';
+                const tagClass = release.prerelease ? 'tag-pre' : release.draft ? 'tag-draft' : 'tag-stable';
+                
+                let description = '';
+                if (release.body) {
+                    description = marked.parse(release.body);
+                }
+                
+                html += `
+                    <div class="release-item">
                         <div class="release-header">
-                            <h3>${release.name || release.tag_name}</h3>
-                            ${statusBadge}
+                            <div class="release-title">${release.name || release.tag_name}</div>
+                            <div class="${tagClass}">${tag}</div>
                         </div>
-                        <div class="release-meta">
-                            <span>版本: ${release.tag_name}</span>
-                            <span>发布日期: ${formattedDate}</span>
-                            <span>文件数: ${release.assets.length}</span>
-                        </div>
-                        ${descriptionHtml ? `
-                            <div class="release-description">
-                                ${descriptionHtml}
-                            </div>
-                        ` : ''}
+                        <div class="release-meta">${release.tag_name} · ${date}</div>
+                        ${description ? `<div class="release-description">${description}</div>` : ''}
                         <div class="release-assets">
                             ${release.assets.length > 0 ? 
                                 release.assets.map(asset => `
                                     <div class="asset-item">
-                                        <span class="asset-name">${asset.name}</span>
-                                        <span class="asset-size">${formatFileSize(asset.size)}</span>
-                                        <a href="${asset.browser_download_url}" class="btn small" download>
-                                            下载
-                                        </a>
+                                        <span>${asset.name}</span>
+                                        <a href="${asset.browser_download_url}" download>下载</a>
                                     </div>
                                 `).join('') : 
-                                '<div class="empty-assets">无附件文件</div>'
+                                '<div class="no-assets">无附件</div>'
                             }
                         </div>
-                    `;
-                    
-                    container.appendChild(releaseElement);
-                });
-                
-            } catch (error) {
-                console.error('获取 Release 失败:', error);
-                container.innerHTML = `
-                    <div class="error">
-                        <p>加载失败: ${error.message}</p>
-                        <p>请检查网络连接或稍后再试</p>
                     </div>
                 `;
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
-        
-        function formatFileSize(bytes) {
-            if (!bytes || bytes === 0) return '未知大小';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // 页面加载时获取 releases
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchReleases();
+            });
             
-            // 绑定刷新按钮
-            document.getElementById('refreshBtn').addEventListener('click', fetchReleases);
-        });
+            container.innerHTML = html;
+        }
+        
+        fetchReleases();
     </script>
 </body>
 </html>
