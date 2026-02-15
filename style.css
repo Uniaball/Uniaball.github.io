@@ -1,55 +1,54 @@
 :root {
   /* ===== 1. 核心源色 (Key Colors) ===== */
-  --md-source: #F06292; /* 源色：一个柔和、辨识度高的粉色，作为所有动态生成的起点 */
+  --md-source: #F06292;
 
   /* ===== 2. 动态生成的语义化颜色角色 (Dynamic Color Roles) ===== */
   /* 主要色系 (Primary) */
   --md-primary: var(--md-source);
+  --md-primary-rgb: 240, 98, 146;
   --md-on-primary: #FFFFFF;
-  --md-primary-container: #FFD9E3; /* 极浅的粉色容器 */
-  --md-on-primary-container: #5C1137; /* 深粉紫色，用于容器内文字/图标 */
+  --md-primary-container: #FFD9E3;
+  --md-on-primary-container: #5C1137;
 
-  /* 次要色系 (Secondary) - 系统基于源色自动生成一个互补色系 */
+  /* 次要色系 (Secondary) */
   --md-secondary: #7A5268;
   --md-on-secondary: #FFFFFF;
   --md-secondary-container: #FFD8E8;
   --md-on-secondary-container: #31101D;
 
-  /* 第三色系 (Tertiary) - 另一个自动生成的强调色 */
+  /* 第三色系 (Tertiary) */
   --md-tertiary: #8E4D5C;
   --md-on-tertiary: #FFFFFF;
   --md-tertiary-container: #FFD9DF;
   --md-on-tertiary-container: #3B0719;
 
-  /* 表面与背景 (Surface & Background) - 这是实现您图片“粉白”基底的关键 */
-  --md-background: #FFF8F8; /* 最底层背景，非常浅的粉白 */
-  --md-on-background: #201A1B; /* 背景上的主体文字，深灰带紫调 */
-  --md-surface: #FFF8F8; /* 主要表面（如卡片），与背景相同以保持纯净 */
+  /* 表面与背景 (Surface & Background) */
+  --md-background: #FFF8F8;
+  --md-on-background: #201A1B;
+  --md-surface: #FFF8F8;
   --md-on-surface: #201A1B;
-  --md-surface-variant: #F2DEE4; /* 表面变体（如输入框背景），浅灰粉 */
-  --md-on-surface-variant: #514347; /* 表面变体上的文字 */
+  --md-surface-variant: #F2DEE4;
+  --md-on-surface-variant: #514347;
 
   /* 轮廓与错误 (Outline & Error) */
-  --md-outline: #837377; /* 中性的轮廓色，用于分割线、边框 */
-  --md-outline-variant: #D5C2C7; /* 更浅的轮廓变体 */
-  --md-error: #BA1A1A; /* 保持标准的错误红色 */
+  --md-outline: #837377;
+  --md-outline-variant: #D5C2C7;
+  --md-error: #BA1A1A;
   --md-on-error: #FFFFFF;
   --md-error-container: #FFDAD6;
   --md-on-error-container: #410002;
 
-  /* ===== 3. 阴影 (Shadows) - 使用中性色保证自然 ===== */
+  /* ===== 3. 阴影 (Shadows) ===== */
   --md-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   --md-shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.16);
 }
 
-/* 以下原有的样式规则保持不变 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* 设置背景图片和轻微遮罩 */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
     background-image: url('./assets/background.png');
@@ -62,7 +61,6 @@ body {
     line-height: 1.5;
 }
 
-/* 添加非常透明的遮罩层以增强可读性 */
 body::before {
     content: '';
     position: fixed;
@@ -70,7 +68,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.05); /* 非常透明的白色遮罩 */
+    background-color: rgba(255, 255, 255, 0.05);
     z-index: -1;
 }
 
@@ -80,31 +78,29 @@ body::before {
     padding: 24px 20px;
 }
 
-/* 卡片样式 - 半透明 */
 .card {
-    background: rgba(255, 255, 255, 0.85); /* 85%不透明度的白色 */
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 20px;
     padding: 32px;
     box-shadow: var(--md-shadow);
-    border: 1px solid rgba(231, 224, 236, 0.7); /* 半透明边框 */
+    border: 1px solid rgba(231, 224, 236, 0.7);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(5px); /* 轻微的毛玻璃效果 */
+    backdrop-filter: blur(5px);
 }
 
 .card:hover {
     box-shadow: var(--md-shadow-elevated);
     transform: translateY(-2px);
-    background: rgba(255, 255, 255, 0.92); /* 悬停时稍增强不透明度 */
+    background: rgba(255, 255, 255, 0.92);
 }
 
-/* 按钮样式 - 半透明 */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     padding: 12px 24px;
-    background: rgba(var(--md-primary-rgb), 0.9); /* 90%不透明度的主色 */
+    background: rgba(var(--md-primary-rgb), 0.9);
     color: var(--md-on-primary);
     border: none;
     border-radius: 20px;
@@ -119,27 +115,30 @@ body::before {
 }
 
 .btn:hover {
-    background: rgba(90, 71, 144, 0.95); /* 悬停时颜色加深，透明度略增 */
-    box-shadow: 0 2px 4px rgba(103, 80, 164, 0.3);
+    background: rgba(var(--md-primary-rgb), 1);
+    box-shadow: 0 2px 4px rgba(var(--md-primary-rgb), 0.3);
 }
 
 .btn:active {
-    background: rgba(79, 61, 130, 0.95);
+    background: rgba(var(--md-primary-rgb), 0.95);
     transform: translateY(1px);
 }
 
 .btn-outline {
-    background: rgba(255, 255, 255, 0.15); /* 半透明背景 */
+    background: rgba(255, 255, 255, 0.15);
     color: var(--md-primary);
     border: 1px solid var(--md-outline);
 }
 
 .btn-outline:hover {
-    background: rgba(103, 80, 164, 0.1); /* 悬停时半透明主色 */
+    background: rgba(var(--md-primary-rgb), 0.1);
     border-color: var(--md-primary);
 }
 
-/* MD3 文本输入/选择框 */
+.btn-outline:active {
+    background: rgba(var(--md-primary-rgb), 0.2);
+}
+
 .select-container {
     position: relative;
     flex: 1;
@@ -158,7 +157,7 @@ body::before {
 .select {
     width: 100%;
     padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.9); /* 半透明背景 */
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--md-outline);
     border-radius: 12px;
     font-size: 16px;
@@ -175,13 +174,12 @@ body::before {
     padding: 13px 15px;
 }
 
-/* MD3 列表项 */
 .list-item {
-    background: rgba(255, 255, 255, 0.85); /* 半透明背景 */
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 12px;
-    border: 1px solid rgba(231, 224, 236, 0.7); /* 半透明边框 */
+    border: 1px solid rgba(231, 224, 236, 0.7);
     transition: background-color 0.2s;
 }
 
@@ -201,12 +199,11 @@ body::before {
     color: var(--md-on-surface-variant);
 }
 
-/* MD3 标签 */
 .chip {
     display: inline-flex;
     align-items: center;
     padding: 6px 12px;
-    background: rgba(231, 224, 236, 0.7); /* 半透明背景 */
+    background: rgba(231, 224, 236, 0.7);
     color: var(--md-on-surface-variant);
     border-radius: 8px;
     font-size: 12px;
@@ -216,11 +213,10 @@ body::before {
 }
 
 .chip-primary {
-    background: rgba(103, 80, 164, 0.15); /* 半透明主色 */
+    background: rgba(var(--md-primary-rgb), 0.15);
     color: var(--md-primary);
 }
 
-/* 状态指示器 */
 .loading {
     display: flex;
     flex-direction: column;
@@ -233,7 +229,7 @@ body::before {
 .spinner {
     width: 48px;
     height: 48px;
-    border: 3px solid rgba(103, 80, 164, 0.1);
+    border: 3px solid rgba(var(--md-primary-rgb), 0.1);
     border-radius: 50%;
     border-top-color: var(--md-primary);
     animation: spin 1s linear infinite;
@@ -261,10 +257,10 @@ body::before {
 .error-state {
     text-align: center;
     padding: 32px;
-    background: rgba(255, 235, 238, 0.9); /* 半透明背景 */
-    color: #C62828;
+    background: rgba(var(--md-error-rgb, 186, 26, 26), 0.1);
+    color: var(--md-error);
     border-radius: 16px;
-    border: 1px solid rgba(239, 154, 154, 0.7);
+    border: 1px solid rgba(var(--md-error-rgb, 186, 26, 26), 0.3);
 }
 
 .error-state .icon {
@@ -272,7 +268,6 @@ body::before {
     margin-bottom: 16px;
 }
 
-/* 工具类 */
 .flex {
     display: flex;
 }
@@ -317,7 +312,6 @@ body::before {
     color: var(--md-primary);
 }
 
-/* 响应式 */
 @media (max-width: 768px) {
     .container {
         padding: 16px;
