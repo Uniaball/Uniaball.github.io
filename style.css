@@ -281,3 +281,53 @@ body {
         width: 100%;
     }
 }
+/* 添加背景壁纸样式 */
+body {
+    background-image: url('./assets/background.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+.container {
+    position: relative;
+}
+
+/* 在容器后添加半透明遮罩层，确保文字可读性 */
+.container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); /* 轻微暗色遮罩，可根据需要调整透明度 */
+    z-index: -1;
+}
+
+/* 修改卡片为半透明 */
+.card {
+    background-color: rgba(var(--md-surface-container-rgb, 240, 240, 240), 0.85) !important; /* 85% 不透明度 */
+    backdrop-filter: blur(10px); /* 添加毛玻璃效果，增强视觉层次 */
+    border: 1px solid rgba(var(--md-outline-rgb, 0, 0, 0), 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* 调整按钮在半透明背景下的视觉效果 */
+.btn {
+    background-color: rgba(var(--md-primary-rgb, 103, 80, 164), 0.9);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: rgba(var(--md-primary-rgb, 103, 80, 164), 1);
+    box-shadow: 0 4px 20px rgba(var(--md-primary-rgb, 103, 80, 164), 0.3);
+}
+
+/* 确保其他页面内容区在半透明卡片上清晰可读 */
+main, .content-area {
+    position: relative;
+    z-index: 1;
+}
