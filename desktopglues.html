@@ -3,279 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DesktopGlues - Releases</title>
+    <title>DesktopGlues Releases</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .markdown-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--md-on-surface);
+        }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3, .markdown-content h4 {
+            margin: 1em 0 0.5em 0;
+            color: var(--md-on-surface);
+            font-weight: 500;
+        }
+        .markdown-content h1 { font-size: 1.5em; }
+        .markdown-content h2 { font-size: 1.3em; }
+        .markdown-content h3 { font-size: 1.1em; }
+        .markdown-content h4 { font-size: 1em; }
+        .markdown-content p { margin: 0.5em 0; }
+        .markdown-content ul, .markdown-content ol { margin: 0.5em 0; padding-left: 1.5em; }
+        .markdown-content li { margin: 0.25em 0; }
+        .markdown-content code {
+            background: var(--md-surface-variant);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        .markdown-content pre {
+            background: var(--md-on-surface);
+            color: var(--md-surface);
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0.5em 0;
+        }
+        .markdown-content pre code { background: transparent; padding: 0; }
+        .markdown-content a { color: var(--md-primary); text-decoration: none; }
+        .markdown-content a:hover { text-decoration: underline; }
+        .markdown-content blockquote {
+            border-left: 4px solid var(--md-primary);
+            margin: 0.5em 0;
+            padding-left: 1em;
+            color: var(--md-on-surface-variant);
+        }
+        .release-asset {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--md-surface-variant);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+        .release-asset-name {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--md-on-surface);
+        }
+        .release-asset-size {
+            color: var(--md-on-surface-variant);
+            font-size: 12px;
+        }
+        /* 开关容器样式 */
+        .mirror-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(var(--md-primary-rgb), 0.05);
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+        .mirror-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+        }
+        .toggle-track {
+            width: 40px;
+            height: 20px;
+            background: var(--md-outline-variant);
+            border-radius: 10px;
+            position: relative;
+            transition: background 0.2s;
+        }
+        .toggle-thumb {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        #mirrorToggle:checked + .toggle-track {
+            background: var(--md-primary);
+        }
+        #mirrorToggle:checked + .toggle-track .toggle-thumb {
+            transform: translateX(20px);
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header style="margin-bottom: 32px;">
-            <a href="index.html" class="btn" style="margin-bottom: 16px;">
-                <i class="material-icons">arrow_back</i>
-                <span>返回首页</span>
+        <header class="flex items-center gap-16 mb-24">
+            <a href="index.html" class="btn btn-outline" style="padding: 8px 16px; display: flex; align-items: center; gap: 4px;">
+                <i class="material-icons" style="font-size: 18px;">arrow_back</i>
+                <span>返回</span>
             </a>
-            
-            <div class="card" style="padding: 20px;">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                    <h1 style="font-size: 24px; font-weight: 500;">DesktopGlues Releases</h1>
-                    <div class="chip">GitHub API</div>
-                </div>
-                <p style="color: var(--md-on-surface-variant); margin-bottom: 16px;">Uniaball 桌面端构建下载</p>
-                
-                <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(var(--md-primary-rgb), 0.05); border-radius: 12px;">
-                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; flex: 1;">
-                        <div style="position: relative;">
-                            <input type="checkbox" id="mirrorToggle" style="display: none;">
-                            <div class="toggle-track" style="width: 40px; height: 20px; background: var(--md-outline-variant); border-radius: 10px; position: relative; transition: background 0.2s;">
-                                <div class="toggle-thumb" style="width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></div>
-                            </div>
-                        </div>
-                        <span style="font-size: 14px; font-weight: 500;">使用 bgithub.xyz 镜像下载</span>
-                    </label>
-                    <div class="chip chip-primary" id="mirrorStatus" style="opacity: 0.6;">OFF</div>
-                </div>
+            <div>
+                <h1 style="font-size: 24px; font-weight: 400;">DesktopGlues</h1>
+                <p style="color: var(--md-on-surface-variant); font-size: 14px;">Releases 下载</p>
             </div>
         </header>
-
         <main>
-            <div class="card">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-                    <h2 style="font-size: 20px; font-weight: 500;">可用版本</h2>
-                    <div class="select-container" style="width: 200px;">
-                        <select id="platformSelect" class="select">
-                            <option value="all">所有平台</option>
-                            <option value="windows">Windows</option>
-                            <option value="macos">macOS</option>
-                            <option value="linux">Linux</option>
-                        </select>
-                    </div>
+            <!-- 镜像下载开关 -->
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="mirror-toggle-container">
+                    <label class="mirror-toggle-label">
+                        <input type="checkbox" id="mirrorToggle" style="display: none;">
+                        <div class="toggle-track">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                        <span>使用 bgithub.xyz 镜像下载</span>
+                    </label>
                 </div>
-
-                <div id="loading" class="loading">
+            </div>
+            <!-- 发布列表容器 -->
+            <div id="releasesContainer">
+                <div class="loading">
                     <div class="spinner"></div>
-                    <p>正在加载 Releases...</p>
-                </div>
-
-                <div id="releasesContainer" style="display: none;">
-                    <!-- Releases 将在这里动态加载 -->
-                </div>
-
-                <div id="emptyState" class="empty-state" style="display: none;">
-                    <div class="icon">
-                        <i class="material-icons">inventory_2</i>
-                    </div>
-                    <p>暂无可用版本</p>
-                </div>
-
-                <div id="errorState" class="error-state" style="display: none;">
-                    <div class="icon">
-                        <i class="material-icons">error</i>
-                    </div>
-                    <p id="errorMessage">加载失败</p>
+                    <p>正在获取 Releases...</p>
                 </div>
             </div>
         </main>
-
-        <footer style="margin-top: 32px; text-align: center; color: var(--md-on-surface-variant); font-size: 14px;">
-            <p>通过 GitHub API 获取 · 使用 nightly.link 下载 · 最后更新: <span id="lastUpdate">-</span></p>
-        </footer>
     </div>
 
     <script>
-        const MIRROR_TOGGLE_KEY = 'desktopglues_use_mirror';
         const REPO_OWNER = 'Uniaball';
         const REPO_NAME = 'DesktopGlues';
+        let useMirror = false; // 默认关闭镜像
 
-        let useMirror = localStorage.getItem(MIRROR_TOGGLE_KEY) === 'true';
-        let releasesData = [];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initMirrorToggle();
-            loadReleases();
-            setupPlatformFilter();
-        });
-
-        function initMirrorToggle() {
-            const toggle = document.getElementById('mirrorToggle');
-            const status = document.getElementById('mirrorStatus');
-            
-            toggle.checked = useMirror;
-            updateToggleUI();
-            
-            toggle.addEventListener('change', function() {
-                useMirror = this.checked;
-                localStorage.setItem(MIRROR_TOGGLE_KEY, useMirror);
-                updateToggleUI();
-                updateDownloadLinks();
-            });
-        }
-
-        function updateToggleUI() {
-            const toggle = document.getElementById('mirrorToggle');
-            const track = document.querySelector('.toggle-track');
-            const thumb = document.querySelector('.toggle-thumb');
-            const status = document.getElementById('mirrorStatus');
-            
-            if (useMirror) {
-                track.style.background = 'var(--md-primary)';
-                thumb.style.transform = 'translateX(20px)';
-                status.textContent = 'ON';
-                status.style.opacity = '1';
-            } else {
-                track.style.background = 'var(--md-outline-variant)';
-                thumb.style.transform = 'translateX(0)';
-                status.textContent = 'OFF';
-                status.style.opacity = '0.6';
-            }
-        }
-
-        function convertToMirrorUrl(githubUrl) {
-            if (!useMirror || !githubUrl) return githubUrl;
-            return githubUrl.replace('github.com', 'bgithub.xyz');
-        }
-
-        async function loadReleases() {
+        async function fetchReleases() {
             try {
                 const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`);
-                
                 if (!response.ok) {
-                    throw new Error(`GitHub API 错误: ${response.status}`);
+                    throw new Error(`GitHub API 请求失败 (状态码: ${response.status})`);
                 }
-                
-                releasesData = await response.json();
-                displayReleases(releasesData);
-                
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('releasesContainer').style.display = 'block';
-                
-                updateLastUpdateTime();
-                
+                const releases = await response.json();
+                if (!releases || releases.length === 0) {
+                    throw new Error('未找到任何 Release');
+                }
+                displayReleases(releases);
             } catch (error) {
-                console.error('加载失败:', error);
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('errorState').style.display = 'block';
-                document.getElementById('errorMessage').textContent = error.message;
-            }
-        }
-
-        function displayReleases(releases) {
-            const container = document.getElementById('releasesContainer');
-            container.innerHTML = '';
-            
-            if (!releases || releases.length === 0) {
-                document.getElementById('emptyState').style.display = 'block';
-                return;
-            }
-            
-            releases.forEach(release => {
-                const releaseElement = createReleaseElement(release);
-                container.appendChild(releaseElement);
-            });
-        }
-
-        function createReleaseElement(release) {
-            const div = document.createElement('div');
-            div.className = 'list-item';
-            
-            const assets = release.assets || [];
-            const windowsAssets = assets.filter(a => a.name.includes('.exe') || a.name.includes('.msi') || a.name.includes('windows'));
-            const macosAssets = assets.filter(a => a.name.includes('.dmg') || a.name.includes('.pkg') || a.name.includes('macos'));
-            const linuxAssets = assets.filter(a => a.name.includes('.deb') || a.name.includes('.rpm') || a.name.includes('linux'));
-            
-            let platformTags = '';
-            if (windowsAssets.length > 0) platformTags += '<span class="chip" style="margin-right: 8px;">Windows</span>';
-            if (macosAssets.length > 0) platformTags += '<span class="chip" style="margin-right: 8px;">macOS</span>';
-            if (linuxAssets.length > 0) platformTags += '<span class="chip" style="margin-right: 8px;">Linux</span>';
-            
-            let downloadLinks = '';
-            assets.forEach(asset => {
-                const originalUrl = asset.browser_download_url;
-                const displayUrl = convertToMirrorUrl(originalUrl);
-                downloadLinks += `
-                    <div style="margin-top: 8px;">
-                        <a href="${displayUrl}" class="btn" style="width: 100%; text-align: left;">
-                            <i class="material-icons" style="font-size: 18px;">download</i>
-                            <span>${asset.name}</span>
-                            <small style="margin-left: auto; opacity: 0.7;">${formatFileSize(asset.size)}</small>
-                        </a>
+                console.error('获取失败:', error);
+                document.getElementById('releasesContainer').innerHTML = `
+                    <div class="error-state">
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
+                        <h3 style="margin-bottom: 8px;">获取失败</h3>
+                        <p style="margin-bottom: 16px;">${error.message}</p>
+                        <button onclick="fetchReleases()" class="btn">重试</button>
                     </div>
                 `;
-            });
-            
-            div.innerHTML = `
-                <div class="list-item-primary">
-                    ${release.name || release.tag_name}
-                    ${release.prerelease ? '<span class="chip chip-primary" style="margin-left: 8px;">预发布</span>' : ''}
-                </div>
-                <div class="list-item-secondary" style="margin-bottom: 12px;">
-                    发布于 ${new Date(release.published_at).toLocaleDateString('zh-CN')}
-                    ${platformTags}
-                </div>
-                ${release.body ? `<div style="margin-bottom: 16px; color: var(--md-on-surface-variant); font-size: 14px; line-height: 1.5;">${release.body}</div>` : ''}
-                ${downloadLinks}
-            `;
-            
-            return div;
-        }
-
-        function updateDownloadLinks() {
-            const links = document.querySelectorAll('#releasesContainer .btn');
-            links.forEach(link => {
-                const originalHref = link.getAttribute('data-original-url') || link.href;
-                link.setAttribute('data-original-url', originalHref);
-                
-                if (useMirror) {
-                    link.href = originalHref.replace('github.com', 'bgithub.xyz');
-                } else {
-                    link.href = originalHref.replace('bgithub.xyz', 'github.com');
-                }
-            });
-        }
-
-        function setupPlatformFilter() {
-            const select = document.getElementById('platformSelect');
-            select.addEventListener('change', function() {
-                const platform = this.value;
-                filterReleasesByPlatform(platform);
-            });
-        }
-
-        function filterReleasesByPlatform(platform) {
-            if (platform === 'all') {
-                displayReleases(releasesData);
-                return;
             }
-            
-            const filtered = releasesData.filter(release => {
-                const assets = release.assets || [];
-                return assets.some(asset => {
-                    const name = asset.name.toLowerCase();
-                    if (platform === 'windows') {
-                        return name.includes('.exe') || name.includes('.msi') || name.includes('windows');
-                    } else if (platform === 'macos') {
-                        return name.includes('.dmg') || name.includes('.pkg') || name.includes('macos');
-                    } else if (platform === 'linux') {
-                        return name.includes('.deb') || name.includes('.rpm') || name.includes('linux');
-                    }
-                    return true;
-                });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
             });
-            
-            displayReleases(filtered);
         }
 
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
+            if (!bytes) return '未知';
             const k = 1024;
             const sizes = ['B', 'KB', 'MB', 'GB'];
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        function updateLastUpdateTime() {
-            const element = document.getElementById('lastUpdate');
-            element.textContent = new Date().toLocaleString('zh-CN');
+        // 核心功能：根据开关状态转换下载链接
+        function convertDownloadUrl(originalUrl) {
+            if (!originalUrl) return '';
+            return useMirror ? originalUrl.replace('github.com', 'bgithub.xyz') : originalUrl;
         }
+
+        function displayReleases(releases) {
+            const container = document.getElementById('releasesContainer');
+            if (releases.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="material-icons" style="font-size: 40px; color: #C62828; margin-bottom: 16px;">warning</i>
+                        <p>暂无 Releases</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div style="margin-bottom: 16px; color: var(--md-on-surface-variant); font-size: 14px;">
+                    共 ${releases.length} 个 Release
+                </div>
+            `;
+
+            releases.forEach(release => {
+                const date = formatDate(release.published_at || release.created_at);
+                const isPrerelease = release.prerelease;
+                const isDraft = release.draft;
+                let statusText = '';
+                let statusClass = '';
+
+                if (isDraft) {
+                    statusText = '草稿';
+                    statusClass = 'chip';
+                } else if (isPrerelease) {
+                    statusText = '预发布';
+                    statusClass = 'chip-primary';
+                } else {
+                    statusText = '正式版';
+                    statusClass = 'chip-primary';
+                }
+
+                // 解析 markdown
+                let descriptionHtml = '';
+                if (release.body) {
+                    try {
+                        descriptionHtml = marked.parse(release.body);
+                    } catch (error) {
+                        descriptionHtml = `<p style="color: var(--md-on-surface-variant); font-style: italic;">Markdown 解析失败</p>`;
+                    }
+                }
+
+                html += `
+                    <div class="card" style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 18px; font-weight: 500; color: var(--md-primary); margin-bottom: 4px;">
+                                    ${release.name || release.tag_name}
+                                </div>
+                                <div style="color: var(--md-on-surface-variant); font-size: 14px;">
+                                    ${release.tag_name} · ${date}
+                                </div>
+                            </div>
+                            <div class="${statusClass}">${statusText}</div>
+                        </div>
+                        ${descriptionHtml ? `
+                            <div class="markdown-content" style="margin-bottom: 16px; padding: 16px; background: var(--md-surface-variant); border-radius: 8px;">
+                                ${descriptionHtml}
+                            </div>
+                        ` : ''}
+                        ${release.assets.length > 0 ? `
+                            <div style="margin-top: 16px;">
+                                <div style="color: var(--md-on-surface-variant); font-size: 12px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    下载文件 (${release.assets.length})
+                                </div>
+                                ${release.assets.map(asset => `
+                                    <div class="release-asset">
+                                        <div class="release-asset-name">${asset.name}</div>
+                                        <div class="release-asset-size">${formatFileSize(asset.size)}</div>
+                                        <a href="${convertDownloadUrl(asset.browser_download_url)}"
+                                           class="btn"
+                                           style="padding: 6px 12px; font-size: 12px;"
+                                           download="${asset.name}"
+                                           data-original-url="${asset.browser_download_url}">
+                                            下载
+                                        </a>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div style="color: var(--md-on-surface-variant); font-size: 14px; text-align: center; padding: 16px;">
+                                此 Release 没有附加文件
+                            </div>
+                        `}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            // 为所有新生成的下载链接添加 data-original-url 属性
+            attachDownloadLinkListeners();
+        }
+
+        // 为所有下载链接添加点击监听器，确保实时转换
+        function attachDownloadLinkListeners() {
+            const downloadLinks = document.querySelectorAll('.release-asset a.btn[data-original-url]');
+            downloadLinks.forEach(link => {
+                // 移除旧监听器，防止重复绑定
+                link.replaceWith(link.cloneNode(true));
+            });
+            // 重新获取链接并绑定事件
+            const newLinks = document.querySelectorAll('.release-asset a.btn[data-original-url]');
+            newLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const originalUrl = this.getAttribute('data-original-url');
+                    this.href = convertDownloadUrl(originalUrl);
+                    // 允许默认行为（下载）继续
+                });
+            });
+        }
+
+        // 当开关状态改变时，更新所有下载链接
+        function updateAllDownloadLinks() {
+            const downloadLinks = document.querySelectorAll('.release-asset a.btn[data-original-url]');
+            downloadLinks.forEach(link => {
+                const originalUrl = link.getAttribute('data-original-url');
+                link.href = convertDownloadUrl(originalUrl);
+            });
+        }
+
+        // 初始化开关事件监听
+        function initMirrorToggle() {
+            const toggle = document.getElementById('mirrorToggle');
+            toggle.addEventListener('change', function() {
+                useMirror = this.checked;
+                updateAllDownloadLinks();
+            });
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            initMirrorToggle();
+            fetchReleases();
+        });
     </script>
 </body>
 </html>
