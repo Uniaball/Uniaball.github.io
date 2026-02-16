@@ -385,9 +385,9 @@ body::before {
     position: fixed;
     left: 24px;
     bottom: 24px;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
     background: var(--md-surface);
     color: var(--md-primary);
     display: flex;
@@ -412,7 +412,7 @@ body::before {
 }
 
 .fab-back i {
-    font-size: 24px;
+    font-size: 28px;
 }
 
 /* 移动端适配 */
@@ -420,12 +420,12 @@ body::before {
     .fab-back {
         left: 16px;
         bottom: 16px;
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
     }
     
     .fab-back i {
-        font-size: 20px;
+        font-size: 22px;
     }
 }
