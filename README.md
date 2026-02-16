@@ -11,6 +11,7 @@
 - 简约、无冗余信息
 - 通过 `nightly.link` **直接下载**
 - 支持渲染完整的 **Markdown** 格式
+- 支持使用 `bgithub.xyz` 镜像源下载 **Release**
 
 # 项目结构
 ```
@@ -28,7 +29,8 @@ webside_root/
 - **HTML5 + CSS3** *（Material Design 3 规范）*
 - 原生 **JavaScript** *（ES6+）*
 - GitHub REST API v3
-- ` nightly.link ` *（构建文件代理下载）*
+- `nightly.link` *（构建文件代理下载）*
+- `bgithub.xyz` *（Release 镜像下载）*
 - **marked.js** *（Markdown 解析）*
 
 # 开源协议
