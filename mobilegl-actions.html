@@ -86,8 +86,9 @@
                 const data = await response.json();
 
                 const buildRuns = data.workflow_runs?.filter(run => {
-                    const runName = run.name || '';
-                    return runName.includes(buildType);
+                    const runName = (run.name || '').toLowerCase();
+                    const searchTerm = buildType.toLowerCase();
+                    return runName.includes(searchTerm);
                 }) || [];
 
                 if (buildRuns.length === 0) {
