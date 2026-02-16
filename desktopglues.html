@@ -68,7 +68,6 @@
             color: var(--md-on-surface-variant);
             font-size: 12px;
         }
-        /* 开关容器样式 */
         .mirror-toggle-container {
             display: flex;
             align-items: center;
@@ -115,18 +114,13 @@
 </head>
 <body>
     <div class="container">
-        <header class="flex items-center gap-16 mb-24">
-            <a href="index.html" class="btn btn-outline" style="padding: 8px 16px; display: flex; align-items: center; gap: 4px;">
-                <i class="material-icons" style="font-size: 18px;">arrow_back</i>
-                <span>返回</span>
-            </a>
+        <header class="mb-24">
             <div>
-                <h1 style="font-size: 24px; font-weight: 400;">DesktopGlues</h1>
+                <h1 style="font-size: 32px; font-weight: 400; color: var(--md-primary);">DesktopGlues</h1>
                 <p style="color: var(--md-on-surface-variant); font-size: 14px;">Releases 下载</p>
             </div>
         </header>
         <main>
-            <!-- 镜像下载开关 -->
             <div class="card" style="margin-bottom: 24px;">
                 <div class="mirror-toggle-container">
                     <label class="mirror-toggle-label">
@@ -138,7 +132,6 @@
                     </label>
                 </div>
             </div>
-            <!-- 发布列表容器 -->
             <div id="releasesContainer">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -148,10 +141,15 @@
         </main>
     </div>
 
+    <!-- 悬浮返回按钮 -->
+    <a href="index.html" class="fab-back">
+        <i class="material-icons">arrow_back</i>
+    </a>
+
     <script>
         const REPO_OWNER = 'Uniaball';
         const REPO_NAME = 'DesktopGlues';
-        let useMirror = false; // 默认关闭镜像
+        let useMirror = false;
 
         async function fetchReleases() {
             try {
@@ -196,7 +194,6 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // 核心功能：根据开关状态转换下载链接
         function convertDownloadUrl(originalUrl) {
             if (!originalUrl) return '';
             return useMirror ? originalUrl.replace('github.com', 'bgithub.xyz') : originalUrl;
@@ -238,7 +235,6 @@
                     statusClass = 'chip-primary';
                 }
 
-                // 解析 markdown
                 let descriptionHtml = '';
                 if (release.body) {
                     try {
@@ -295,29 +291,23 @@
             });
 
             container.innerHTML = html;
-            // 为所有新生成的下载链接添加 data-original-url 属性
             attachDownloadLinkListeners();
         }
 
-        // 为所有下载链接添加点击监听器，确保实时转换
         function attachDownloadLinkListeners() {
             const downloadLinks = document.querySelectorAll('.release-asset a.btn[data-original-url]');
             downloadLinks.forEach(link => {
-                // 移除旧监听器，防止重复绑定
                 link.replaceWith(link.cloneNode(true));
             });
-            // 重新获取链接并绑定事件
             const newLinks = document.querySelectorAll('.release-asset a.btn[data-original-url]');
             newLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     const originalUrl = this.getAttribute('data-original-url');
                     this.href = convertDownloadUrl(originalUrl);
-                    // 允许默认行为（下载）继续
                 });
             });
         }
 
-        // 当开关状态改变时，更新所有下载链接
         function updateAllDownloadLinks() {
             const downloadLinks = document.querySelectorAll('.release-asset a.btn[data-original-url]');
             downloadLinks.forEach(link => {
@@ -326,7 +316,6 @@
             });
         }
 
-        // 初始化开关事件监听
         function initMirrorToggle() {
             const toggle = document.getElementById('mirrorToggle');
             toggle.addEventListener('change', function() {
@@ -335,7 +324,6 @@
             });
         }
 
-        // 页面加载时执行
         document.addEventListener('DOMContentLoaded', function() {
             initMirrorToggle();
             fetchReleases();
