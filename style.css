@@ -420,12 +420,12 @@ body::before {
     .fab-back {
         left: 16px;
         bottom: 16px;
-        width: 52px;
-        height: 52px;
-        border-radius: 16px;
+        width: 64px;
+        height: 64px;
+        border-radius: 20px;
     }
     
     .fab-back i {
-        font-size: 22px;
+        font-size: 24px;
     }
 }
