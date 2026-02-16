@@ -22,9 +22,9 @@
                     <div class="select-container">
                         <select id="buildTypeSelect" class="select">
                             <option value="" disabled selected>选择构建类型</option>
-                            <option value="Build MobileGL">Build MobileGL Espryt</option>
-                            <option value="Build MobileGL Vulkan">Build MobileGL Magma</option>
-                            <option value="Build MobileGL Vulkan (TMP)">Build MobileGL Magma-tmp</option>
+                            <option value="Build MobileGL">Build MobileGL (Espryt)</option>
+                            <option value="Build MobileGL Vulkan">Build MobileGL Vulkan (Magma)</option>
+                            <option value="Build MobileGL Vulkan (TMP)">Build MobileGL Vulkan (TMP) (Magma-tmp)</option>
                         </select>
                     </div>
                     <button id="fetchBtn" class="btn" onclick="fetchBuilds()">获取构建</button>
@@ -65,7 +65,7 @@
             document.getElementById('buildsContainer').innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>正在获取 ${buildType} 构建...</p>
+                    <p>正在获取构建...</p>
                 </div>
             `;
 
@@ -88,7 +88,8 @@
                 const buildRuns = data.workflow_runs?.filter(run => {
                     const runName = (run.name || '').toLowerCase();
                     const searchTerm = buildType.toLowerCase();
-                    return runName.includes(searchTerm);
+                    // 精确匹配工作流名称
+                    return runName === searchTerm;
                 }) || [];
 
                 if (buildRuns.length === 0) {
@@ -188,7 +189,7 @@
 
             let html = `
                 <div style="margin-bottom: 16px; color: var(--md-on-surface-variant); font-size: 14px;">
-                    找到 ${builds.length} 个 ${buildType} 构建
+                    找到 ${builds.length} 个构建文件
                 </div>
             `;
 
