@@ -150,10 +150,16 @@
             }
         }
 
+        // **已修复的 formatDate 函数**
         function formatDate(dateString) {
             const date = new Date(dateString);
             const now = new Date();
-            const diff = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+            
+            // 修复关键：转换为本地时区的年月日（忽略时间部分），确保日期比较基于日历日期而非具体时刻
+            const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const localNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            
+            const diff = Math.floor((localNow - localDate) / (1000 * 60 * 60 * 24));
 
             if (diff === 0) {
                 return '今天 ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
