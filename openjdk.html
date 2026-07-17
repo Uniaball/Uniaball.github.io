@@ -27,6 +27,7 @@
                             <option value="25">OpenJDK 25</option>
                             <option value="26">OpenJDK 26</option>
                             <option value="27">OpenJDK 27</option>
+                            <option value="28">OpenJDK 28</option>
                         </select>
                     </div>
                     <button id="fetchBtn" class="btn" onclick="fetchBuilds()">获取构建</button>
@@ -152,12 +153,10 @@
             }
         }
 
-        // **已修复的 formatDate 函数**
         function formatDate(dateString) {
             const date = new Date(dateString);
             const now = new Date();
             
-            // 修复关键：转换为本地时区的年月日（忽略时间部分），确保日期比较基于日历日期而非具体时刻
             const localDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
             const localNow = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             

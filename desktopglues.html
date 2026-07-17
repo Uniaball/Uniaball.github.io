@@ -128,7 +128,7 @@
                         <div class="toggle-track">
                             <div class="toggle-thumb"></div>
                         </div>
-                        <span>使用 bgithub.xyz 镜像下载</span>
+                        <span>使用 gh-proxy.com 镜像下载</span>
                     </label>
                 </div>
             </div>
@@ -196,7 +196,7 @@
 
         function convertDownloadUrl(originalUrl) {
             if (!originalUrl) return '';
-            return useMirror ? originalUrl.replace('github.com', 'bgithub.xyz') : originalUrl;
+            return useMirror ? 'https://gh-proxy.com/' + originalUrl : originalUrl;
         }
 
         function displayReleases(releases) {
