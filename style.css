@@ -213,11 +213,16 @@ body::before {
     border: 1px solid rgba(231, 224, 236, 0.7);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: fadeInStagger 0.5s ease-out both;
+    -webkit-tap-highlight-color: transparent;
+    cursor: default;
 }
 
-.list-item:hover {
-    background: rgba(var(--md-primary-rgb), 0.04);
-    transform: translateX(4px);
+/* 仅在支持悬停的设备上应用 hover 样式 */
+@media (hover: hover) {
+    .list-item:hover {
+        background: rgba(var(--md-primary-rgb), 0.04);
+        transform: translateX(4px);
+    }
 }
 
 .list-item:nth-child(1) { animation-delay: 0.05s; }
@@ -380,6 +385,7 @@ body::before {
         width: 100%;
     }
 }
+
 /* 悬浮返回按钮 - FAB 样式 */
 .fab-back {
     position: fixed;
@@ -415,7 +421,6 @@ body::before {
     font-size: 28px;
 }
 
-/* 移动端适配 */
 @media (max-width: 768px) {
     .fab-back {
         left: 16px;
