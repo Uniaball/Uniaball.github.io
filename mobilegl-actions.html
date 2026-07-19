@@ -33,7 +33,6 @@
         </main>
     </div>
 
-    <!-- 悬浮返回按钮 -->
     <a href="index.html" class="fab-back">
         <i class="material-icons">arrow_back</i>
     </a>
@@ -44,7 +43,6 @@
         const TARGET_WORKFLOW_NAME = 'MobileGL APK';
         let cachedBuilds = null;
 
-        // 强制刷新：清空缓存后重新获取
         function refreshBuilds() {
             cachedBuilds = null;
             fetchBuilds();
@@ -87,7 +85,6 @@
 
                 const builds = [];
 
-                // 取前 20 个运行记录
                 const artifactPromises = buildRuns.slice(0, 20).map(async run => {
                     try {
                         const artifactsRes = await fetch(
@@ -99,14 +96,15 @@
                             const artifacts = artifactsData.artifacts || [];
 
                             artifacts.forEach(artifact => {
-                                const nightlyLink = `https://nightly.link/${REPO_OWNER}/${REPO_NAME}/actions/runs/${run.id}/${artifact.name}.zip`;
+                                const archiveUrl = artifact.archive_download_url;
+                                const ghProxyUrl = `https://gh-proxy.com/${archiveUrl}`;
 
                                 builds.push({
                                     name: artifact.name,
                                     runId: run.id,
                                     createdAt: artifact.created_at,
                                     size: artifact.size_in_bytes,
-                                    downloadUrl: nightlyLink,
+                                    downloadUrl: ghProxyUrl,
                                     runNumber: run.run_number,
                                     conclusion: run.conclusion
                                 });
@@ -123,7 +121,6 @@
                     throw new Error('未发现可下载的构建文件（Artifacts）');
                 }
 
-                // 按创建时间降序排列
                 builds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
                 cachedBuilds = builds;
